@@ -21,9 +21,9 @@ There is no automatic repositioning of ui elements except for few components.
 - [x] slider
 - [x] progress bar
 - [x] slot
-- [] scroll bar
-- []
-- []
+- [ ] scroll bar
+- [ ]
+- [ ]
  
 # xml
 
@@ -89,24 +89,24 @@ There is no automatic repositioning of ui elements except for few components.
 
 # Positioning on xml:
 	
-	| position | xml attribute | value | warning
+	| position | xml attribute | value | warning |
 	| ------------- | ------------- | ------------- | ------------- |
-	| align center  | x, y  | center  | need to set parent width or height
-	| align right minus width  | right  | width  | need to set parent width or height
-	| align bottom minus height  | bottom  | height  | need to set parent width or height
+	| align center  | x, y  | center  | need to set parent width or height |
+	| align right minus width  | right  | width  | need to set parent width or height |
+	| align bottom minus height  | bottom  | height  | need to set parent width or height |
 	
 	
 # TODO
-- [] transitions
-	- [] alpha
-	- [] movement
-	- [] bounce
-	- [] color effect
-- [] allow value 'auto' for width and height to make the parent width or height equal to children
-- [] hot reload
-- [] some responsiveness to avoid letterbox and better looking in mobile
-- [] samples
-- [] haxe 4 support
-- [] documentation
+- [ ] transitions
+	- [ ] alpha
+	- [ ] movement
+	- [ ] bounce
+	- [ ] color effect
+- [ ] allow value 'auto' for width and height to make the parent width or height equal to children
+- [ ] hot reload
+- [ ] some responsiveness to avoid letterbox and better looking in mobile
+- [ ] samples
+- [ ] haxe 4 support
+- [ ] documentation
 
 
