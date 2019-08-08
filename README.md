@@ -20,10 +20,8 @@ There is no automatic repositioning of ui elements except for few components.
 - [x] radio
 - [x] slider
 - [x] progress bar
-- [x] slot
+- [x] slot (place holder)
 - [ ] scroll bar
-- [ ]
-- [ ]
  
 # xml
 

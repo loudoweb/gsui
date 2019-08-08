@@ -3,8 +3,8 @@ import gsui.interfaces.IDestroyable;
 import gsui.interfaces.IPositionUpdatable;
 import gsui.interfaces.ILayoutable;
 import gsui.utils.MathUtils;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
+import openfl.display.Sprite;
+import openfl.events.MouseEvent;
 
 /**
  * Basic code for buttons (Button, SimpleButton)

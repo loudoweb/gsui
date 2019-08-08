@@ -1,7 +1,7 @@
 package gsui;
-import flash.display.Bitmap;
-import flash.display.PixelSnapping;
-import flash.events.MouseEvent;
+import openfl.display.Bitmap;
+import openfl.display.PixelSnapping;
+import openfl.events.MouseEvent;
 import haxe.xml.Fast;
 import openfl.Assets;
 import openfl.display.DisplayObject;
