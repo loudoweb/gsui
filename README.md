@@ -106,5 +106,10 @@ There is no automatic repositioning of ui elements except for few components.
 - [ ] samples
 - [ ] haxe 4 support
 - [ ] documentation
+- [ ] remove bindx dependency ?
 
+#dependencies
+- actuate
+- bindx
+- openfl
 

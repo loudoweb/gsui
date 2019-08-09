@@ -86,12 +86,12 @@ class GUITextField extends Sprite
 		
 		if (Data.has.align)
 			format.align = Data.att.align; 
-		else if(textDef.has.align)
+		else if(textDef != null && textDef.has.align)
 			format.align = textDef.att.align; 
 			
 		if (Data.has.bold)
 			format.bold = Std.string(Data.att.bold) == "true"; 
-		else if(textDef.has.bold)
+		else if(textDef != null && textDef.has.bold)
 			format.bold = Std.string(textDef.att.bold) == "true"; 
 		
 		_textfield.defaultTextFormat = format;
@@ -99,7 +99,7 @@ class GUITextField extends Sprite
 		if (Data.has.input && Data.att.input == "true") {
 			_textfield.type = TextFieldType.INPUT;
 			_textfield.selectable = true;
-		}else if (textDef.has.input && textDef.att.input == "true") {
+		}else if (textDef != null && textDef.has.input && textDef.att.input == "true") {
 			_textfield.type = TextFieldType.INPUT;
 			_textfield.selectable = true;
 		}else {
@@ -107,7 +107,7 @@ class GUITextField extends Sprite
 		}
 		if (Data.has.width) {
 			_textfield.width = Std.string(Data.att.width) == "" ? _containerW : Std.parseFloat(Data.att.width);
-		}else if (textDef.has.width) {
+		}else if (textDef != null && textDef.has.width) {
 			_textfield.width = Std.string(textDef.att.width) == "" ? _containerW : Std.parseFloat(textDef.att.width);
 		}else {
 			_textfield.autoSize = TextFieldAutoSize.LEFT;//TODO check language (arab => to the right)
@@ -115,10 +115,10 @@ class GUITextField extends Sprite
 		
 		if (Data.has.height)
 			_textfield.height = Std.parseFloat(Data.att.height);
-		else if (textDef.has.height)
+		else if (textDef != null && textDef.has.height)
 			_textfield.height = Std.parseFloat(textDef.att.height);
 			
-		if ((Data.has.multiline && Data.att.multiline == "true") || (textDef.has.multiline && textDef.att.multiline == "true")){
+		if ((Data.has.multiline && Data.att.multiline == "true") || (textDef != null && textDef.has.multiline && textDef.att.multiline == "true")){
 			_textfield.multiline = true;
 			_textfield.wordWrap = true;
 			_textfield.autoSize = TextFieldAutoSize.LEFT;
@@ -126,17 +126,17 @@ class GUITextField extends Sprite
 		
 		if(Data.has.maxChars)
 			_textfield.maxChars = Std.parseInt(Data.att.maxChars);
-		else if(textDef.has.maxChars)
+		else if(textDef != null && textDef.has.maxChars)
 			_textfield.maxChars = Std.parseInt(textDef.att.maxChars);
 			
 		if (Data.has.a)//TODO r instead?
 			_textfield.rotation = Std.parseFloat(Std.string(Data.att.a));
-		else if (textDef.has.a)
+		else if (textDef != null && textDef.has.a)
 			_textfield.rotation = Std.parseFloat(Std.string(textDef.att.a));
 			
 		if (Data.has.strike)
 			_strike = Data.att.strike == "true";
-		else if (textDef.has.strike)
+		else if (textDef != null && textDef.has.strike)
 			_strike = textDef.att.strike == "true";
 		
 		addChild(_textfield);

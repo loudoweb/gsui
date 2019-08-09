@@ -6,6 +6,7 @@ import gsui.SimpleButton;
 import gsui.utils.FilterUtils;
 import gsui.utils.GUIUtils;
 import gsui.utils.ReplaceUtils;
+import gsui.GUIGroup.ELayout;
 import haxe.ds.StringMap;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -332,6 +333,10 @@ class GUI extends Sprite
 				display = _parseText(el, ContainerW, ContainerH);
 			}else if (el.name == "group") {
 				display = _parseGroup(el, ContainerW, ContainerH);
+			}else if (el.name == "boxV") {
+				display = _parseGroup(el, ContainerW, ContainerH, VERTICAL);
+			}else if (el.name == "boxH") {
+				display = _parseGroup(el, ContainerW, ContainerH, HORIZONTAL);
 			}else if (el.name == "render") {
 				display = _parseRender(el, ContainerW, ContainerH);
 			}else if (el.name == "slot") {
@@ -424,10 +429,10 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseGroup(fast:Fast, parentWidth:Float, parentHeight:Float):DisplayObject
+	public static function _parseGroup(fast:Fast, parentWidth:Float, parentHeight:Float, layout:ELayout = null):DisplayObject
 	{	
 		//TODO create GuiLayer and give ability to reorder/redispatch in realtime
-		var display:GUIGroup = new GUIGroup(fast, parentWidth, parentHeight);
+		var display:GUIGroup = new GUIGroup(fast, parentWidth, parentHeight, layout);
 		return display;
 	}
 	/**

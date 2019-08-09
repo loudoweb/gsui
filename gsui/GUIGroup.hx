@@ -8,6 +8,11 @@ import haxe.xml.Fast;
 import gsui.interfaces.IDebuggable;
 #end
 
+enum ELayout
+{
+	VERTICAL;
+	HORIZONTAL;
+}
 /**
  * Group is a layer that can contain many elements and handle different custom states to update its content
  * @author loudo
@@ -20,7 +25,7 @@ class GUIGroup extends Sprite implements ILayoutable
 {
 	var _width:Float;
 	var _height:Float;
-	var _layout:String = "";//default relative
+	var _layout:ELayout;//default relative
 	public var isBackground:Bool = false;
 	#if debug
 	var _debug:Bool = false;
@@ -63,7 +68,7 @@ class GUIGroup extends Sprite implements ILayoutable
 	 * @param	ContainerW size of parent container
 	 * @param	ContainerH size of parent container
 	 */
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Fast, ContainerW:Float, ContainerH:Float, layout:ELayout = null) 
 	{
 		super();
 		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
@@ -79,41 +84,50 @@ class GUIGroup extends Sprite implements ILayoutable
 		
 		state = "";
 		
+		_layout = layout;
+		
 		if (Data.has.layout)
 		{
+			if(Data.att.layout == "v")
+				_layout = VERTICAL;
+			if(Data.att.layout == "h")
+				_layout = HORIZONTAL;
+		}
+		
+		if (_layout != null)
+		{
 			//update nodes x and y
-			_layout = Data.att.layout;
 			var gap:Float = Data.has.gap ? Std.parseFloat(Data.att.gap) : 0;
 			var pWH:Float = 0;
 			for (node in _nodes)
 			{
 				if (Std.is(node.element, ILayoutable))
 				{
-					if (_layout == "h")
+					switch(_layout)
 					{
-						
-						if (Std.is(node.element, IPositionUpdatable))
-							cast(node.element, IPositionUpdatable).setX(pWH);
-						else
-							node.element.x = pWH;
-						pWH += node.element.width > 0 ? node.element.width + gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + gap;
-					}
-					else {//v
-						if (Std.is(node.element, IPositionUpdatable))
-							cast(node.element, IPositionUpdatable).setY(pWH);
-						else
-							node.element.y = pWH;
-						pWH += node.element.height > 0 ? node.element.height + gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + gap;
+						case HORIZONTAL:
+							if (Std.is(node.element, IPositionUpdatable))
+								cast(node.element, IPositionUpdatable).setX(pWH);
+							else
+								node.element.x = pWH;
+							pWH += node.element.width > 0 ? node.element.width + gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + gap;
+						case VERTICAL:
+							if (Std.is(node.element, IPositionUpdatable))
+								cast(node.element, IPositionUpdatable).setY(pWH);
+							else
+								node.element.y = pWH;
+							pWH += node.element.height > 0 ? node.element.height + gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + gap;
 					}
 				}
 			}
 			//only if width and height not specified in xml
 			//update width or height after layouting to permit good x and y placement for this
-			if (_layout == "h")
+			switch(_layout)
 			{
-				_width = width;
-			}else {
-				_height = height;
+				case HORIZONTAL:
+					_width = width;
+				case VERTICAL:
+					_height = height;
 			}
 		}
 		//update this x and y
