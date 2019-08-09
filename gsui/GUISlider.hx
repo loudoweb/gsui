@@ -6,6 +6,8 @@ import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 import gsui.interfaces.ILayoutable;
+import openfl.events.MouseEvent;
+import openfl.geom.Rectangle;
 
 /**
  * Slider
@@ -16,6 +18,7 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 	var _bg:Bitmap;
 	var _slide:Sprite;
 	var _label:GUITextField;
+	var _rect:Rectangle;
 	@:bindable public var value(default, set):Float;
 	
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
@@ -37,15 +40,19 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 		addChild(_bg);
 		
 		if (buttonDef != null) {
+			
 			var sliderOff:BitmapData = buttonDef.has.name ? GUI._getBitmapData(buttonDef.att.name) : null;
 			var sliderOn:BitmapData = buttonDef.has.hover ? GUI._getBitmapData(buttonDef.att.hover) : null;
 			//TODO use SliderButton
 			var button:SimpleButton = new SimpleButton(sliderOff, sliderOn, sliderOn, buttonDef, _bg.width, _bg.height);
 			button.hasGUICallback = false;
-			button.mouseCallback = _clickHandler;
+			button.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
 			_slide = new Sprite();
 			addChild(_slide);
 			_slide.addChild(button);
+			
+			_rect = new Rectangle(-_slide.x / 2, _slide.y, _bg.width - _slide.x / 2, 0);
+			
 		}else {
 			trace("attribute button_def should be define");
 		}
@@ -63,16 +70,35 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 	public function set_value(newValue:Float):Float
 	{
 		value = newValue;
+		
 		if (_label != null)
-			_label.text = Std.string(Std.int(newValue*100));
+			_label.text = Std.string(Std.int(newValue * 100));
+			
 		if (_slide != null)
-			_slide.x = Std.int(newValue * _bg.width - _slide.width*0.5);
+			_slide.x = Std.int(newValue * _bg.width - _slide.width * 0.5);
+			
 		return newValue;
 	}
 	
-	private function _clickHandler(button:AbstractButton, eventType:String, param:String):Void
+	function onDown(e:MouseEvent):Void
+	{
+		_slide.startDrag(true, _rect);
+		this.stage.addEventListener(MouseEvent.MOUSE_UP, onUp);
+	}
+	
+	function onUp(e:MouseEvent):Void
+	{
+		_slide.stopDrag();
+		this.stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
+		
+		//update value
+		value = _slide.x / _bg.width;
+	}
+	
+	function _clickHandler(button:AbstractButton, eventType:String, param:String):Void
 	{
 		//TODO push to update?
+		trace('click');
 	}
 	
 	public static function merge(Data:Fast, Def:Fast):Fast
