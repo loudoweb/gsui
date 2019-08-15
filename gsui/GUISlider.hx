@@ -19,13 +19,16 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 	var _slide:Sprite;
 	var _label:GUITextField;
 	var _rect:Rectangle;
+	var _button:SimpleButton;
 	@:bindable public var value(default, set):Float;
 	
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
 		super();
+		
 		if(Data.has.id)
 			name = Data.att.id;
+			
 		var sliderDef:Fast = Data.has.slider_def ? GUI._getDef(Data.att.slider_def) : null;
 		var labelDef:Fast = Data.has.label_def ? GUI._getDef(Data.att.label_def) : (sliderDef != null && sliderDef.has.label_def ?  GUI._getDef(sliderDef.att.label_def) : null);
 		var buttonDef:Fast = Data.has.button_def ? GUI._getDef(Data.att.button_def) : (sliderDef != null && sliderDef.has.button_def ?  GUI._getDef(sliderDef.att.button_def) : null);
@@ -44,17 +47,17 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 			var sliderOff:BitmapData = buttonDef.has.name ? GUI._getBitmapData(buttonDef.att.name) : null;
 			var sliderOn:BitmapData = buttonDef.has.hover ? GUI._getBitmapData(buttonDef.att.hover) : null;
 			//TODO use SliderButton
-			var button:SimpleButton = new SimpleButton(sliderOff, sliderOn, sliderOn, buttonDef, _bg.width, _bg.height);
-			button.hasGUICallback = false;
-			button.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+			_button = new SimpleButton(sliderOff, sliderOn, sliderOn, buttonDef, _bg.width, _bg.height);
+			_button.hasGUICallback = false;
+			_button.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
 			_slide = new Sprite();
 			addChild(_slide);
-			_slide.addChild(button);
+			_slide.addChild(_button);
 			
-			_rect = new Rectangle(-_slide.x / 2, _slide.y, _bg.width - _slide.x / 2, 0);
+			_rect = new Rectangle(-_slide.width / 2, _slide.y, _bg.width, 0);
 			
 		}else {
-			trace("attribute button_def should be define");
+			trace("attribute button_def should be defined");
 		}
 		
 		if(labelDef != null){
@@ -64,6 +67,7 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 			addChild(textContainer);
 			textContainer.addChild(_label);
 		}
+		
 		value = 1;
 		
 	}
@@ -71,8 +75,7 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 	{
 		value = newValue;
 		
-		if (_label != null)
-			_label.text = Std.string(Std.int(newValue * 100));
+		setLabel(newValue);
 			
 		if (_slide != null)
 			_slide.x = Std.int(newValue * _bg.width - _slide.width * 0.5);
@@ -80,19 +83,36 @@ class GUISlider extends Sprite implements ILayoutable implements IBindable
 		return newValue;
 	}
 	
+	inline public function setLabel(newValue:Float):Void
+	{
+		if (_label != null)
+			_label.text = Std.string(Std.int(newValue * 100));
+	}
+	
 	function onDown(e:MouseEvent):Void
 	{
-		_slide.startDrag(true, _rect);
+		_slide.startDrag(false, _rect);
 		this.stage.addEventListener(MouseEvent.MOUSE_UP, onUp);
+		this.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMove);
 	}
 	
 	function onUp(e:MouseEvent):Void
 	{
 		_slide.stopDrag();
 		this.stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
+		this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
 		
 		//update value
-		value = _slide.x / _bg.width;
+		trace(_slide.x);
+		value = (_slide.x + _slide.width / 2) / _bg.width;
+		trace(_slide.x);
+		_button.unselect();
+		
+	}
+	
+	function onMove(e:MouseEvent):Void
+	{
+		setLabel((_slide.x + _slide.width / 2) / _bg.width);
 	}
 	
 	function _clickHandler(button:AbstractButton, eventType:String, param:String):Void
