@@ -70,7 +70,7 @@ class GUI extends Sprite
 	 */
 	static var _bindedVariables:StringMap<BindedVariables>;
 	
-	static var _instance:GUI;
+	public static var instance(default, null):GUI;
 	static var _basePath:String;
 	static var _interfaceFast:Fast;
 	static var _confFast:Fast;
@@ -89,12 +89,14 @@ class GUI extends Sprite
 	 * @param	xml interface descriptor
 	 * @param	conf configuration of views
 	 * @param	basePath base path of assets
+	 * @param	width same as of your xml interface
+	 * @param	height same as of your xml interface
 	 * @param	tongue allow to convert variable in current language.
 	 */
 	public function new(xml:String, conf:String, basePath:String, width:Float, height:Float, tongue:Tongue =  null) 
 	{
 		super();
-		_instance = this;
+		instance = this;
 		
 		_basePath = basePath;
 		_tongue = tongue;
@@ -123,15 +125,10 @@ class GUI extends Sprite
 		#end
 	}
 	
-	public static function onResize(width:Float, height:Float):Void
+	public static function setDimension(width:Float, height:Float):Void
 	{
 		guiWidth = width;
 		guiHeight = height;
-	}
-	
-	public static function getInstance():GUI
-	{
-		return _instance;
 	}
 	
 	/**
@@ -173,11 +170,11 @@ class GUI extends Sprite
 			if(!_views.exists(gui)){
 				groupRoot = cast _parseGroup(_viewsConf.get(gui), guiWidth, guiHeight);
 				_views.set(gui, groupRoot);
-				_instance.addChild(groupRoot);
+				instance.addChild(groupRoot);
 				_activeTopViews.set(gui, groupRoot);
 			}else {
 				groupRoot = _views.get(gui);
-				_instance.addChild(groupRoot);
+				instance.addChild(groupRoot);
 				_activeTopViews.set(gui, groupRoot);
 			}
 		}
@@ -223,9 +220,9 @@ class GUI extends Sprite
 			}
 			_activeTopViews.set(gui, groupRoot);
 			if (groupRoot.isBackground)
-				_instance.addChildAt(groupRoot, 0);
+				instance.addChildAt(groupRoot, 0);
 			else
-				_instance.addChild(groupRoot);
+				instance.addChild(groupRoot);
 		}
 		//saturate
 		if (el.has.saturate)
