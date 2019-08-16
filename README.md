@@ -12,7 +12,7 @@ There is no automatic repositioning of ui elements except for few components.
 - [x] group, vbox, hbox
 - [x] render (group that uses item renderer)
 - [x] img
-- [x] grid9 (TODO merge with img and use new openfl code)
+- [x] grid9
 - [x] text
 - [x] simple Button
 - [x] button

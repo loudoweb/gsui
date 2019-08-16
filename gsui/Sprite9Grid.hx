@@ -10,7 +10,6 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 
 /**
- * TODO use current working openfl code
  * @author Lars Doucet
  * @author loudo
  */
