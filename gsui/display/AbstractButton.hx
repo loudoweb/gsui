@@ -1,7 +1,6 @@
-package gsui;
+package gsui.display;
 import gsui.interfaces.IDestroyable;
 import gsui.interfaces.IPositionUpdatable;
-import gsui.interfaces.ILayoutable;
 import gsui.utils.MathUtils;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
@@ -10,7 +9,7 @@ import openfl.events.MouseEvent;
  * Basic code for buttons (Button, SimpleButton)
  * @author loudo
  */
-class AbstractButton extends Sprite implements IPositionUpdatable implements IDestroyable  implements ILayoutable
+class AbstractButton extends Sprite implements IPositionUpdatable implements IDestroyable 
 {
 
 	public var isHover:Bool = false;

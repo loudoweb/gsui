@@ -1,4 +1,5 @@
-package gsui;
+package gsui.display;
+import gsui.utils.ParserUtils;
 import openfl.display.Sprite;
 import openfl.text.Font;
 import openfl.text.TextField;
@@ -12,6 +13,7 @@ import openfl.display.Shape;
 import openfl.geom.Point;
 #if debug
 import gsui.interfaces.IDebuggable;
+import openfl.events.MouseEvent;
 #end
 
 /**
@@ -78,8 +80,8 @@ class GUITextField extends Sprite
 		
 		
 		var size = Data.has.size ? Std.parseInt(Data.att.size) : (textDef.has.size ? Std.parseInt(textDef.att.size) : 20);
-		var color = Data.has.color ? Std.parseInt(Data.att.color) : (textDef.has.color ? Std.parseInt(textDef.att.color) : 0);
 		
+		var color = ParserUtils.getColor(Data, textDef);
 		
 		var format:TextFormat = new TextFormat (font.fontName, size, color );
 		
@@ -185,12 +187,18 @@ class GUITextField extends Sprite
 		{
 			_textfield.background = true;
 			_textfield.backgroundColor = 0xff0000;
+			_textfield.addEventListener(MouseEvent.ROLL_OVER, onOverDebug);
 			_debug = true;
 		}
 		else {
 			_textfield.background = false;
+			_textfield.removeEventListener(MouseEvent.ROLL_OVER, onOverDebug);
 			_debug = false;
 		}
+	}
+	function onOverDebug(e:MouseEvent):Void
+	{
+		trace('over $name');
 	}
 	#end
 }

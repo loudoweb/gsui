@@ -10,18 +10,41 @@ class TextUtils
 {
 	static var nbsp:EReg = ~/ ([:?!]+)/gi;
 	public static var COLOR_TAG:StringMap<String>;
+
 	/**
-	 * Init color
+	 * 
+	 * @param	black
+	 * @param	main default color
+	 * @param	iMain opposite of default color
+	 * @param	secondary other main color
+	 * @param	red
+	 * @param	green
+	 * @param	blue
+	 * @param	white
+	 * @param	grey
 	 */
-	public static function initColor():Void
+	public static function initColor(main:String = "000000",
+									iMain:String = "FFFFFF",
+									secondary:String = "DEDEDE",
+									red:String = "FF0000",
+									green:String = "00FF00",
+									blue:String = "0000FF",
+									black:String = "000000",
+									white:String = "FFFFFF",
+									grey:String = "CCCCCC",
+									pink:String = "DF5286"):Void
 	{
 		COLOR_TAG = new StringMap<String>();
-		COLOR_TAG.set("black", "000000");
-		COLOR_TAG.set("red", "ff0000");
-		COLOR_TAG.set("green", "00ff00");
-		COLOR_TAG.set("blue", "0000ff");
-		COLOR_TAG.set("white", "ffffff");
-		COLOR_TAG.set("ping", "DF5286");
+		COLOR_TAG.set("black", black);
+		COLOR_TAG.set("main", main);
+		COLOR_TAG.set("iMain", iMain);
+		COLOR_TAG.set("secondary", secondary);
+		COLOR_TAG.set("red", red);
+		COLOR_TAG.set("green", green);
+		COLOR_TAG.set("blue", blue);
+		COLOR_TAG.set("white", white);
+		COLOR_TAG.set("grey", grey);
+		COLOR_TAG.set("grey", pink);
 	}
 	
 	/**

@@ -1,11 +1,12 @@
-package gsui;
-import gsui.interfaces.ILayoutable;
+package gsui.display;
 import gsui.interfaces.IPositionUpdatable;
+import gsui.utils.XMLUtils;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import haxe.xml.Fast;
 #if debug
 import gsui.interfaces.IDebuggable;
+import openfl.events.MouseEvent;
 #end
 
 enum ELayout
@@ -18,9 +19,9 @@ enum ELayout
  * @author loudo
  */
 #if debug
-class GUIGroup extends Sprite implements ILayoutable implements IDebuggable
+class GUIGroup extends Sprite implements IDebuggable
 #else
-class GUIGroup extends Sprite implements ILayoutable
+class GUIGroup extends Sprite
 #end
 {
 	var _width:Float;
@@ -67,12 +68,20 @@ class GUIGroup extends Sprite implements ILayoutable
 	 * @param	Data
 	 * @param	ContainerW size of parent container
 	 * @param	ContainerH size of parent container
+	 * @param	layout default is absolute placement
 	 */
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float, layout:ELayout = null) 
+	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
 		super();
 		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
 		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
+		
+		if (Data.has.size && Data.att.size == "firstChild")
+		{
+			_width = Std.parseFloat(XMLUtils.getFirstChild(Data).att.width);
+			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
+		}
+		
 		isBackground = Data.has.background && Data.att.background == "true";
 		
 		name = Data.att.id;
@@ -83,15 +92,13 @@ class GUIGroup extends Sprite implements ILayoutable
 		_nodes = GUI._parseXML(Data, _width, _height);
 		
 		state = "";
-		
-		_layout = layout;
-		
-		if (Data.has.layout)
+				
+		switch(Data.name)
 		{
-			if(Data.att.layout == "v")
-				_layout = VERTICAL;
-			if(Data.att.layout == "h")
-				_layout = HORIZONTAL;
+			case "boxV":
+			_layout = VERTICAL;
+			case "boxH":
+			_layout = HORIZONTAL;
 		}
 		
 		if (_layout != null)
@@ -101,24 +108,24 @@ class GUIGroup extends Sprite implements ILayoutable
 			var pWH:Float = 0;
 			for (node in _nodes)
 			{
-				if (Std.is(node.element, ILayoutable))
+				
+				switch(_layout)
 				{
-					switch(_layout)
-					{
-						case HORIZONTAL:
-							if (Std.is(node.element, IPositionUpdatable))
-								cast(node.element, IPositionUpdatable).setX(pWH);
-							else
-								node.element.x = pWH;
-							pWH += node.element.width > 0 ? node.element.width + gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + gap;
-						case VERTICAL:
-							if (Std.is(node.element, IPositionUpdatable))
-								cast(node.element, IPositionUpdatable).setY(pWH);
-							else
-								node.element.y = pWH;
-							pWH += node.element.height > 0 ? node.element.height + gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + gap;
-					}
+					case HORIZONTAL:
+						if (	Std.is(node.element, IPositionUpdatable))
+							cast(node.element, IPositionUpdatable).setX(pWH);
+						else
+							node.element.x = pWH;
+						pWH += node.element.width > 0 ? node.element.width + gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + gap;
+					case VERTICAL:
+						if (Std.is(node.element, IPositionUpdatable))
+							cast(node.element, IPositionUpdatable).setY(pWH);
+						else
+							node.element.y = pWH;
+						pWH += node.element.height > 0 ? node.element.height + gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + gap;
+						
 				}
+				
 			}
 			//only if width and height not specified in xml
 			//update width or height after layouting to permit good x and y placement for this
@@ -223,31 +230,36 @@ class GUIGroup extends Sprite implements ILayoutable
 	#if debug
 	public function drawDebug():Void
 	{
-		trace('drawDebug');
 		if (!_debug)
 		{
 			trace('drawDebug');
-			this.graphics.beginFill(0x0000ff, 0.25);
+			this.graphics.beginFill(0x0000ff, 0.10);
 			this.graphics.drawRect(0, 0, width, height);
 			this.graphics.endFill();
+			this.addEventListener(MouseEvent.ROLL_OVER, onOverDebug);
 			//no recursive for GuiGroup since all groups are stored in GUI for now
 			for (node in _nodes)
 			{
-				if(Std.is(node.element, IDebuggable) && !Std.is(node.element, GUIGroup)){
+				if(Std.is(node.element, IDebuggable)){
 					cast(node.element, IDebuggable).drawDebug();
 				}
 			}
 			_debug = true;
 		}else {
 			this.graphics.clear();
+			this.removeEventListener(MouseEvent.ROLL_OVER, onOverDebug);
 			for (node in _nodes)
 			{
-				if(Std.is(node.element, IDebuggable) && !Std.is(node.element, GUIGroup)){
+				if(Std.is(node.element, IDebuggable)){
 					cast(node.element, IDebuggable).drawDebug();
 				}
 			}
 			_debug = false;
 		}
+	}
+	function onOverDebug(e:MouseEvent):Void
+	{
+		trace('over $name');
 	}
 	#end
 }

@@ -15,6 +15,9 @@ class ElementPosition
 	public var x_hover:Float = 0;
 	public var y_hover:Float = 0;
 	
+	public var pivotX:Float = 0;
+	public var pivotY:Float = 0;
+	
 	public var hasSelected:Bool = false;
 	public var x_selected:Float = 0;
 	public var y_selected:Float = 0;
@@ -30,34 +33,25 @@ class ElementPosition
 	{
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
+		
 		if (fast != null) {
+			
+			if (fast.has.pivot)
+			{
+				var pivots = fast.att.pivot.split(',');
+				pivotX = Std.parseFloat(pivots[0]);
+				pivotY = Std.parseFloat(pivots[1]);
+			}
+			
 			if (fast.has.x) {
-				x = fast.att.x == "center" ? (parentWidth  - elementWidth) * 0.5 : Std.parseFloat(fast.att.x);
+				x = fast.att.x == "center" ? (parentWidth  - elementWidth) * 0.5 : Std.parseFloat(fast.att.x) - pivotX * elementWidth;
 			}else if (fast.has.right) {
-				if (fast.att.right == "width") {
-					x = parentWidth  - elementWidth;
-				}else if (fast.att.right == "center") {
-					x = parentWidth  - elementWidth * 0.5;
-				}else {
-					x = parentWidth  - Std.parseFloat(fast.att.right);
-				}
-			}else if (fast.has.left) {//TODO add for others too
-				if (fast.att.left == "width") {
-					x = - elementWidth;
-				}else if (fast.att.left == "center") {
-					x = - elementWidth*0.5;
-				}
+				x = parentWidth  - Std.parseFloat(fast.att.right) - elementWidth - pivotX * elementWidth;
 			}
 			if (fast.has.y) {
-				y =  fast.att.y == "center" ? (parentHeight  - elementHeight) * 0.5 : Std.parseFloat(fast.att.y);
+				y =  fast.att.y == "center" ? (parentHeight  - elementHeight) * 0.5 : Std.parseFloat(fast.att.y) - pivotY * elementHeight;
 			}else if (fast.has.bottom) {
-				if (fast.att.bottom == "height") {
-					y = parentHeight  - elementHeight;
-				}else if (fast.att.bottom == "center") {
-					y = parentHeight  - elementHeight * 0.5;
-				}else {
-					y = parentHeight - Std.parseFloat(fast.att.bottom);
-				}
+				y = parentHeight - Std.parseFloat(fast.att.bottom) - elementHeight - pivotY * elementHeight;
 			}
 			
 			if (fast.has.maskW && fast.has.maskH)

@@ -1,14 +1,14 @@
-package gsui;
+package gsui.display;
+import gsui.utils.ParserUtils;
 import openfl.display.Sprite;
 import haxe.xml.Fast;
-import gsui.interfaces.ILayoutable;
 
 /**
  * ...render many elements automatically.
  * @usage call setData(), addData(), removeData() to update
  * @author loudo
  */
-class GuiRender extends Sprite  implements ILayoutable
+class GUIRender extends Sprite
 {
 	public var isBackground:Bool = false;
 	
@@ -34,8 +34,8 @@ class GuiRender extends Sprite  implements ILayoutable
 	{
 		super();
 		
-		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
-		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
+		_width = ParserUtils.getWidth(Data, ContainerW);
+		_height = ParserUtils.getHeight(Data, ContainerH);
 		isBackground = Data.has.background && Data.att.background == "true";
 		centerContent = Data.has.x && Data.att.x == "center";//TODO center y
 		_containerW = ContainerW;

@@ -1,4 +1,5 @@
 package gsui;
+import gsui.display.GUITextField;
 
 /**
  * Create a variable and add as many textfields you like, when the value changes, the textfields will be updated

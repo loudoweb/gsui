@@ -2,7 +2,7 @@ package gsui.utils;
 import gsui.GUI.Tongue;
 
 /**
- * ...
+ * Helper to replace ids by text in current language
  * @author Loudo
  */
 class ReplaceUtils

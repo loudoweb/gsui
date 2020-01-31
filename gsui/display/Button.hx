@@ -1,4 +1,5 @@
-package gsui;
+package gsui.display;
+import gsui.utils.XMLUtils;
 import openfl.display.Bitmap;
 import openfl.display.PixelSnapping;
 import openfl.events.MouseEvent;
@@ -97,6 +98,12 @@ class Button extends AbstractButton
 		
 		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
 		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
+		
+		if (Data.has.size && Data.att.size == "firstChild")
+		{
+			_width = Std.parseFloat(XMLUtils.getFirstChild(Data).att.width);
+			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
+		}
 		
 		_keepSelect = Data.has.keepSelect ? Data.att.keepSelect == "true" : false;
 		

@@ -1,24 +1,40 @@
 package gsui;
+import gsui.ElementPosition;
+import gsui.display.AbstractButton;
+import gsui.display.GUITextField;
+import gsui.display.SimpleButton;
+import gsui.display.Button;
+import gsui.display.CheckBox;
+import gsui.display.GUIGroup;
+import gsui.display.GUIRender;
+import gsui.display.GUISlider;
+import gsui.display.GUIShape;
+import gsui.display.ProgressBar;
+import gsui.display.RadioButton;
+import gsui.display.Slot;
+import gsui.display.Sprite9Grid;
 import gsui.interfaces.ICustomCursor;
 import gsui.interfaces.IState;
-import gsui.ElementPosition;
-import gsui.SimpleButton;
 import gsui.utils.FilterUtils;
-import gsui.utils.GUIUtils;
+import gsui.utils.MaskUtils;
 import gsui.utils.ReplaceUtils;
-import gsui.GUIGroup.ELayout;
 import haxe.ds.StringMap;
+import haxe.xml.Fast;
+import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.display.PixelSnapping;
+
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.filters.ColorMatrixFilter;
-import haxe.xml.Fast;
-import openfl.Assets;
 #if dconsole
 import pgr.dconsole.DC;
+#end
+#if svg
+import format.SVG;
+import openfl.display.Shape;
 #end
 import openfl.filters.GlowFilter;
 
@@ -42,6 +58,24 @@ enum EGUIEffect {
 	GLOW;
 	SEPIA;
 	HUESAT;
+}
+enum EGUIType {
+	IMG;
+	GRID9;
+	SIMPLEBUTTON;
+	BUTTON;
+	CHECKBOX;
+	RADIO;
+	SLIDER;
+	TEXT;
+	GROUP;
+	BOXV;
+	BOXH;
+	RENDER;
+	SLOT;
+	PROGRESSBAR;
+	RECT;
+	CIRCLE;
 }
 typedef Tongue =
 {
@@ -310,37 +344,43 @@ class GUI extends Sprite
 		var _nodes:Array<GUINode> = new Array<GUINode>();
 		var display:DisplayObject = null;
 		var node:GUINode = null;
+				
 		for(el in Data.elements)
 		{
-			if (el.name == "img") {
-				display = _parseImage(el, ContainerW, ContainerH);
-			}else if (el.name == "grid9") {
-				display = _parseGrid9(el, ContainerW, ContainerH);
-			}else if (el.name == "simpleButton") {
-				display = _parseSimpleButton(el, ContainerW, ContainerH);
-			}else if (el.name == "button") {
-				display = _parseButton(el, ContainerW, ContainerH);
-			}else if (el.name == "checkbox") {
-				display = _parseCheckbox(el, ContainerW, ContainerH);
-			}else if (el.name == "radio") { 
-				display = _parseRadio(el, ContainerW, ContainerH);
-			}else if (el.name == "slider") { 
-				display = _parseSlider(el, ContainerW, ContainerH);
-			}else if (el.name == "text") {
-				display = _parseText(el, ContainerW, ContainerH);
-			}else if (el.name == "group") {
-				display = _parseGroup(el, ContainerW, ContainerH);
-			}else if (el.name == "boxV") {
-				display = _parseGroup(el, ContainerW, ContainerH, VERTICAL);
-			}else if (el.name == "boxH") {
-				display = _parseGroup(el, ContainerW, ContainerH, HORIZONTAL);
-			}else if (el.name == "render") {
-				display = _parseRender(el, ContainerW, ContainerH);
-			}else if (el.name == "slot") {
-				display = _parseSlot(el, ContainerW, ContainerH);
-			}else if (el.name == "progressBar"){
-				display = _parseProgress(el, ContainerW, ContainerH);
+			switch(Type.createEnum(EGUIType, el.name.toUpperCase()))
+			{
+				case IMG:
+					display = _parseImage(el, ContainerW, ContainerH);
+				case GRID9:
+					display = _parseGrid9(el, ContainerW, ContainerH);
+				case SIMPLEBUTTON:
+					display = _parseSimpleButton(el, ContainerW, ContainerH);
+				case BUTTON:
+					display = _parseButton(el, ContainerW, ContainerH);
+				case CHECKBOX:
+					display = _parseCheckbox(el, ContainerW, ContainerH);
+				case RADIO:
+					display = _parseRadio(el, ContainerW, ContainerH);
+				case SLIDER:
+					display = _parseSlider(el, ContainerW, ContainerH);
+				case TEXT:
+					display = _parseText(el, ContainerW, ContainerH);
+				case GROUP:
+					display = _parseGroup(el, ContainerW, ContainerH);
+				case BOXV:
+					display = _parseGroup(el, ContainerW, ContainerH);
+				case BOXH:
+					display = _parseGroup(el, ContainerW, ContainerH);
+				case RENDER:
+					display = _parseRender(el, ContainerW, ContainerH);
+				case SLOT:
+					display = _parseSlot(el, ContainerW, ContainerH);
+				case PROGRESSBAR:
+					display = _parseProgress(el, ContainerW, ContainerH);
+				case RECT, CIRCLE:
+					display = _parseShape(el, ContainerW, ContainerH);
 			}
+			
 			if (display != null) {
 				node = new GUINode(display, el.has.state ? el.att.state : "", el);
 				_nodes.push(node);
@@ -358,7 +398,24 @@ class GUI extends Sprite
 	 */
 	public static function _parseImage(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
-		var image:Bitmap = new Bitmap(Assets.getBitmapData(_basePath + el.att.name, true), PixelSnapping.AUTO, true);
+		var image:DisplayObject;
+		
+		#if svg
+		
+		if (el.att.name.indexOf(".svg") != -1)
+		{
+			//svg
+			var svg = new SVG(Assets.getText (_basePath + el.att.name));
+			var shape = new Shape();
+			svg.render(shape.graphics);
+			image = shape;
+		}else{
+			image = new Bitmap(Assets.getBitmapData(_basePath + el.att.name, true), PixelSnapping.AUTO, true);
+		}
+		
+		#else
+		image = new Bitmap(Assets.getBitmapData(_basePath + el.att.name, true), PixelSnapping.AUTO, true);
+		#end
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
 	/**
@@ -370,7 +427,7 @@ class GUI extends Sprite
 	 */
 	public static function _parseGrid9(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
-		var image:Sprite9Grid = new Sprite9Grid(Assets.getBitmapData(_basePath + el.att.img, true), el.has.width? Std.parseInt(el.att.width) : Std.int(parentWidth), el.has.height? Std.parseInt(el.att.height) : Std.int(parentHeight));
+		var image = new Sprite9Grid(Assets.getBitmapData(_basePath + el.att.img, true), el.has.width? Std.parseInt(el.att.width) : Std.int(parentWidth), el.has.height? Std.parseInt(el.att.height) : Std.int(parentHeight));
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
 	/**
@@ -389,6 +446,8 @@ class GUI extends Sprite
 		var text:String = "";
 		if (el.has.text) {
 			text = _setText(el.att.text, textField);
+		}else if(el.innerHTML != "") {
+			textField.text = el.innerData;
 		}else {
 			textField.text = text;
 		}
@@ -426,10 +485,10 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseGroup(fast:Fast, parentWidth:Float, parentHeight:Float, layout:ELayout = null):DisplayObject
+	public static function _parseGroup(fast:Fast, parentWidth:Float, parentHeight:Float):DisplayObject
 	{	
 		//TODO create GuiLayer and give ability to reorder/redispatch in realtime
-		var display:GUIGroup = new GUIGroup(fast, parentWidth, parentHeight, layout);
+		var display = new GUIGroup(fast, parentWidth, parentHeight);
 		return display;
 	}
 	/**
@@ -441,7 +500,7 @@ class GUI extends Sprite
 	 */
 	public static function _parseRender(fast:Fast, parentWidth:Float, parentHeight:Float):DisplayObject
 	{	
-		var display:GuiRender = new GuiRender(fast, parentWidth, parentHeight);
+		var display = new GUIRender(fast, parentWidth, parentHeight);
 		return display;
 	}
 	/**
@@ -547,9 +606,13 @@ class GUI extends Sprite
 	 */
 	public static function _parseProgress(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
-		var display:ProgressBar = new ProgressBar(fast, parentWidth, parentHeight, _basePath);
-		if(fast.has.id)
-			display.name = fast.att.id;
+		var display = new ProgressBar(fast, parentWidth, parentHeight, _basePath);
+		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
+	}
+	
+	public static function _parseShape(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	{
+		var display = new GUIShape(fast, parentWidth, parentHeight);
 		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
 	}
 	
@@ -567,10 +630,11 @@ class GUI extends Sprite
 		var pos:ElementPosition = new ElementPosition(el, parentWidth, parentHeight, displayWidth, displayHeight);
 		
 		if(pos.mask != null)
-			GUIUtils.createMask(display, pos.mask);
+			MaskUtils.createMask(display, pos.mask);
 		
 		display.x = pos.x;
 		display.y = pos.y;
+		
 		if (el.has.scale)
 			display.scaleX = display.scaleY = Std.parseFloat(Std.string(el.att.scale));
 		if (el.has.sW)

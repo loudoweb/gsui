@@ -1,4 +1,4 @@
-package gsui;
+package gsui.display;
 
 import gsui.utils.DestroyUtils;
 import openfl.display.Bitmap;

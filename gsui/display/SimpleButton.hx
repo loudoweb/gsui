@@ -1,5 +1,5 @@
-package gsui;
-import gsui.utils.GUIUtils;
+package gsui.display;
+import gsui.utils.MaskUtils;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
@@ -51,7 +51,7 @@ class SimpleButton extends AbstractButton
 			rotation = Std.parseFloat(Std.string(Data.att.a));
 		
 		if(_positions.mask != null)
-			GUIUtils.createMask(this, _positions.mask);
+			MaskUtils.createMask(this, _positions.mask);
 		
 		addChild(_default);
 		state = DEFAULT;
@@ -69,7 +69,7 @@ class SimpleButton extends AbstractButton
 			x = _positions.x + _positions.x_hover;
 			y = _positions.y + _positions.y_hover;
 			if (_positions.maskOver != null)
-				GUIUtils.createMask(this, _positions.maskOver);
+				MaskUtils.createMask(this, _positions.maskOver);
 			state = HOVER;
 		}else {
 			if(_hover != null){
@@ -80,7 +80,7 @@ class SimpleButton extends AbstractButton
 			x = _positions.x;
 			y = _positions.y;
 			if (_positions.maskOver != null)
-				GUIUtils.createMask(this, _positions.mask);
+				MaskUtils.createMask(this, _positions.mask);
 		}
 		state = DEFAULT;
 		super.doHover(e);
@@ -95,7 +95,7 @@ class SimpleButton extends AbstractButton
 			x = _positions.x + _positions.x_selected;
 			y = _positions.y + _positions.y_selected;
 			if (_positions.maskSelected != null)
-				GUIUtils.createMask(this, _positions.maskSelected);
+				MaskUtils.createMask(this, _positions.maskSelected);
 			state = SELECTED;
 			handleListeners(false);
 		}
@@ -112,7 +112,7 @@ class SimpleButton extends AbstractButton
 		x = _positions.x;
 		y = _positions.y;
 		if (_positions.maskOver != null || _positions.maskSelected != null)
-			GUIUtils.createMask(this, _positions.mask);
+			MaskUtils.createMask(this, _positions.mask);
 		state = DEFAULT;
 		handleListeners();
 	}

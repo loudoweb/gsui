@@ -1,4 +1,4 @@
-package gsui;
+package gsui.display;
 import haxe.xml.Fast;
 import openfl.display.BitmapData;
 

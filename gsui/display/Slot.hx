@@ -1,4 +1,4 @@
-package gsui;
+package gsui.display;
 
 import openfl.display.Sprite;
 

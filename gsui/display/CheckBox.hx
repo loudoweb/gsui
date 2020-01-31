@@ -1,6 +1,7 @@
-package gsui;
+package gsui.display;
 import bindx.IBindable;
 import gsui.utils.DestroyUtils;
+import gsui.utils.GraphicsUtils;
 import haxe.xml.Fast;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -41,11 +42,9 @@ class CheckBox extends AbstractButton implements IBindable
 		_label.x += _bg.width;
 		addChild(_label);
 		
-		this.graphics.beginFill(0, 0);
-		this.graphics.drawRect(0,0,_bg.width, _bg.height);
-		this.graphics.endFill();
 		
-		
+		GraphicsUtils.drawRectFill(this.graphics, _bg.width, _bg.height, 0, 0);
+
 		
 		_positions = new ElementPosition(Data, ContainerW, ContainerH, _bg.width, _bg.height);
 		

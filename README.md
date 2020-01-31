@@ -92,6 +92,10 @@ There is no automatic repositioning of ui elements except for few components.
 | align center  | x, y  | center  | need to set parent width or height |
 | align right minus width  | right  | width  | need to set parent width or height |
 | align bottom minus height  | bottom  | height  | need to set parent width or height |
+
+# Fonts:
+	
+Must be in fonts folder and have lowercase extension in ttf only.
 	
 	
 # TODO
@@ -106,10 +110,10 @@ There is no automatic repositioning of ui elements except for few components.
 - [ ] samples
 - [ ] haxe 4 support
 - [ ] documentation
-- [ ] remove bindx dependency ?
+- [ ] remove bindx2 dependency ?
 
-#dependencies
+# dependencies
 - actuate
-- bindx
+- bindx2
 - openfl
 

@@ -1,11 +1,10 @@
-package gsui;
+package gsui.display;
 import bindx.IBindable;
 import haxe.xml.Fast;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
-import gsui.interfaces.ILayoutable;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 
@@ -13,7 +12,7 @@ import openfl.geom.Rectangle;
  * Slider
  * @author loudo
  */
-class GUISlider extends Sprite implements ILayoutable implements IBindable
+class GUISlider extends Sprite implements IBindable
 {
 	var _bg:Bitmap;
 	var _slide:Sprite;

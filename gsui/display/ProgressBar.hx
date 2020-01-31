@@ -1,4 +1,4 @@
-package gsui;
+package gsui.display;
 
 import haxe.xml.Fast;
 import openfl.Assets;
@@ -6,14 +6,13 @@ import openfl.display.Bitmap;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import gsui.interfaces.ILayoutable;
 
 /**
  * Progress bar
  * TODO animate
  * @author loudo
  */
-class ProgressBar extends Sprite implements ILayoutable
+class ProgressBar extends Sprite
 {
 
 	var img:Bitmap;
