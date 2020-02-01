@@ -45,7 +45,7 @@ class ParserUtils
 		return 0;
 	}
 	
-	static function parseColor(str:String):Int
+	public static function parseColor(str:String):Int
 	{
 		str = StringTools.replace(str, "#", "0x");
 		if (str.indexOf("0x") != 0)

@@ -15,11 +15,14 @@ import gsui.display.Slot;
 import gsui.display.Sprite9Grid;
 import gsui.interfaces.ICustomCursor;
 import gsui.interfaces.IState;
+import gsui.transition.ITransitionFactory;
+import gsui.transition.Transition;
 import gsui.utils.FilterUtils;
 import gsui.utils.MaskUtils;
 import gsui.utils.ReplaceUtils;
 import haxe.ds.StringMap;
 import haxe.xml.Fast;
+import motion.Actuate;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -83,6 +86,16 @@ typedef Tongue =
 }
 class GUI extends Sprite
 {
+	
+	/**
+	 * default : STATIC ; DYNAMIC means that all containers can resize when children change size or positions. You can control at a component basis using dynamic="true".
+	 */
+	public static var ISDYNAMIC:Bool = false;
+	/**
+	 * width beyond it doesn't scale, default: always scale
+	 */
+	public static var EFFECTIVE_AREA:Int = 4000;
+	
 	/**
 	 * top group currently on display list
 	 */
@@ -104,6 +117,9 @@ class GUI extends Sprite
 	 */
 	static var _bindedVariables:StringMap<BindedVariables>;
 	
+	static var _transition:StringMap<Transition>;
+
+	
 	public static var instance(default, null):GUI;
 	static var _basePath:String;
 	static var _interfaceFast:Fast;
@@ -114,6 +130,7 @@ class GUI extends Sprite
 	
 	static var _tongue:Tongue;
 	static var _cursor:ICustomCursor;
+	static var _transitionFactory:ITransitionFactory;
 	
 	static public var guiWidth(default, null):Float;
 	static public var guiHeight(default, null):Float;
@@ -127,24 +144,27 @@ class GUI extends Sprite
 	 * @param	height same as of your xml interface
 	 * @param	tongue allow to convert variable in current language.
 	 */
-	public function new(xml:String, conf:String, basePath:String, width:Float, height:Float, tongue:Tongue =  null) 
+	public function new(xml:String, conf:String, basePath:String, width:Float, height:Float, tongue:Tongue =  null, transition:ITransitionFactory = null) 
 	{
 		super();
 		instance = this;
 		
 		_basePath = basePath;
 		_tongue = tongue;
+		_transitionFactory = transition;
 		
 		guiWidth = width;
 		guiHeight = height;
 		
 		//InterfaceMacro.init(xml);
 		
-		_activeTopViews = new Map<String, GUIGroup>();
-		_views = new Map<String, GUIGroup>();
-		_viewsConf = new Map<String, Fast>();
-		_def = new Map<String, Fast>();
-		_bindedVariables = new Map<String, BindedVariables>();
+		_activeTopViews = new StringMap<GUIGroup>();
+		_views = new StringMap<GUIGroup>();
+		_viewsConf = new StringMap<Fast>();
+		_def = new StringMap<Fast>();
+		_bindedVariables = new StringMap<BindedVariables>();
+		_transition = new StringMap<Transition>();
+		
 		
 		var xmlInterface:String = Assets.getText(xml);
 		var xmlConf:String		= Assets.getText(conf);
@@ -659,6 +679,21 @@ class GUI extends Sprite
 			_effect(display, Type.createEnum(EGUIEffect, el.att.effect.toUpperCase()));
 			
 		return display;
+	}
+	
+	public static function getTransition(name:String):Transition
+	{
+		if (!_transition.exists(name))
+		{
+			for (tween in _interfaceFast.node.transitions.nodes.tween)
+			{
+				if (tween.att.id == name)
+				{
+					_transition.set(name, _transitionFactory.create(tween));
+				}
+			}
+		}
+		return _transition.get(name);
 	}
 	
 	/**
