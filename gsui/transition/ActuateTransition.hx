@@ -49,7 +49,7 @@ class ActuateTransition extends Transition
 				tween = Actuate.apply(target, properties);
 			case TRANSFORM:
 				var str = Reflect.hasField(properties, "strength") ? properties.strength : 1;
-				var alpha = Reflect.hasField(properties, "alpha") ? properties.alpha : 1;
+				var alpha = Reflect.hasField(properties, "alpha") ? properties.alpha : null;
 				tween = Actuate.transform(target, duration).color(ParserUtils.parseColor(properties.color), str, alpha);
 			case EFFECTS:
 				trace('${properties.filter} not implemented yet');

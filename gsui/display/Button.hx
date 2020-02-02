@@ -41,11 +41,10 @@ class Button extends AbstractButton
 	function set_state(value:String):String { 
 		if (_currentState == value)
 			return _currentState;
-			
-		_currentState = value;
+					
 		//CHILDS
 		//remove everything but state == ""
-		if(_currentState != ""){
+		if(value != ""){
 			for (node in _nodes)
 			{
 				if(!node.isDefaultState() && !node.hasState(_additionalDefaultState)){
@@ -83,6 +82,20 @@ class Button extends AbstractButton
 							}
 						}
 						
+						if (value == "hover" && node.data.has.onHover )
+						{
+							for (onHover in node.data.att.onHover.split(","))
+							{
+								GUI.getTransition(onHover).start(node.element);
+							}
+						}else if (_currentState == "hover" && value == "up" && node.data.has.onUp)
+						{
+							for (onUp in node.data.att.onUp.split(","))
+							{
+								GUI.getTransition(onUp).start(node.element);
+							}
+						}
+						
 						if (Std.is(node.element, GUITextField) && node.data.has.hoverColor)//hack for text
 						{
 							if (value == "hover") {
@@ -106,6 +119,8 @@ class Button extends AbstractButton
 				x = _positions.x + _positions.x_selected;
 				y = _positions.y + _positions.y_selected;
 		}
+		
+		_currentState = value;
 		
 		return _currentState;
 	} 
