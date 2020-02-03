@@ -99,11 +99,16 @@ Must be in fonts folder and have lowercase extension in ttf only.
 	
 	
 # TODO
-- [ ] transitions
-	- [ ] alpha
-	- [ ] movement
-	- [ ] bounce
-	- [ ] color effect
+- [x] transitions
+	- [x] actuate tween
+	- [x] actuate transform
+	- [x] actuate effects
+	- [x] actuate apply
+	- [x] on added
+	- [x] on removed
+	- [x] on hover
+	- [x] on back to up
+	- [x] other lib than actuate should be ok to used
 - [ ] allow value 'auto' for width and height to make the parent width or height equal to children
 - [ ] hot reload
 - [ ] some responsiveness to avoid letterbox and better looking in mobile
@@ -111,6 +116,7 @@ Must be in fonts folder and have lowercase extension in ttf only.
 - [ ] haxe 4 support
 - [ ] documentation
 - [ ] remove bindx2 dependency ?
+- [ ] add macros to include classes from xml
 
 # dependencies
 - actuate

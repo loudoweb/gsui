@@ -14,7 +14,7 @@ import gsui.display.RadioButton;
 import gsui.display.Slot;
 import gsui.display.Sprite9Grid;
 import gsui.interfaces.ICustomCursor;
-import gsui.interfaces.IState;
+import gsui.interfaces.IStateManager;
 import gsui.transition.ITransitionFactory;
 import gsui.transition.Transition;
 import gsui.utils.FilterUtils;
@@ -126,7 +126,7 @@ class GUI extends Sprite
 	static var _confFast:Fast;
 	
 	static var _package:String;
-	static var _gameState:IState;
+	static var _gameState:IStateManager;
 	
 	static var _tongue:Tongue;
 	static var _cursor:ICustomCursor;
@@ -152,6 +152,8 @@ class GUI extends Sprite
 		_basePath = basePath;
 		_tongue = tongue;
 		_transitionFactory = transition;
+		
+		_package = "";
 		
 		guiWidth = width;
 		guiHeight = height;
@@ -198,7 +200,7 @@ class GUI extends Sprite
 	 * 
 	 * @param	state game state handler that GSUI can call to synchronise your views with your game systems
 	 */
-	public static function _addGameState(state:IState):Void
+	public static function _addGameState(state:IStateManager):Void
 	{
 		_gameState = state;
 	}
@@ -237,16 +239,17 @@ class GUI extends Sprite
 		{
 			_desaturate(null);
 		}
-		//create dynamic class to handle elements by custom code
-		if(el.has.classes){
+		//create dynamic class to handle elements by custom code 
+		//TODO generate by macro
+		/*if(el.has.classes){
 			var classes:Array<String> = Std.string(el.att.classes).split(",");
 			for (curClass in classes)
 			{
 				Type.createInstance(Type.resolveClass(_package + curClass), []);
 			}
 			
-		}
-		//handle state game with IState
+		}*/
+		//handle state game with IStateManager
 		if (_gameState != null)
 		{
 			var state:String = el.has.state ? Std.string(el.att.state).toUpperCase() : "";
@@ -292,7 +295,7 @@ class GUI extends Sprite
 			}
 			
 		}
-		//handle state game with IState
+		//handle state game with IStateManager
 		if (_gameState != null)
 		{
 			var state:String = el.has.state ? Std.string(el.att.state).toUpperCase() : "";
@@ -325,7 +328,7 @@ class GUI extends Sprite
 		{
 			_desaturate(Std.string(el.att.saturate).split(","));
 		}
-		//handle state game with IState
+		//handle state game with IStateManager
 		if (_gameState != null)
 		{
 			if(el.has.state)

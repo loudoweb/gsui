@@ -14,6 +14,7 @@ import gsui.interfaces.IDebuggable;
 /**
  * Advanced Button where you can put as many things you want including texts
  * TODO externalize get assets and parsing data
+ * TODO QCU
  * @author loudo
  */
 #if debug
@@ -35,7 +36,7 @@ class Button extends AbstractButton
 	#end
 	
 	var _data:GuiButtonData = null;
-	var _additionalDefaultState:String = "";//only one additional default state per button activated at a time
+	var _customState:String = "";//only one additional default state per button activated at a time
 	var _currentState:String = "";
 	public var state(get, set):String;
 	function get_state():String{ return _currentState; } 
@@ -44,12 +45,21 @@ class Button extends AbstractButton
 		if (_currentState == value)
 			return _currentState;
 					
+		handleState(value);
+		
+		_currentState = value;
+		
+		return _currentState;
+	} 
+	
+	function handleState(value:String):Void
+	{
 		//CHILDS
-		//remove everything but state == ""
+		//remove everything but state == "" and customState
 		if(value != ""){
 			for (node in _nodes)
 			{
-				if(!node.isDefaultState() && !node.hasState(_additionalDefaultState)){
+				if(!node.isDefaultState() && !node.hasState(_customState)){
 					if (node.element != null && node.element.parent != null) {
 						if (node.data.has.onOut)
 						{
@@ -71,7 +81,7 @@ class Button extends AbstractButton
 		//add default (state == "") and current state (allow to replace in order element non removed too)
 		for (node in _nodes)
 		{
-			if (node.hasState(value) || node.isDefaultState() || node.hasState(_additionalDefaultState))
+			if (node.hasState(value) || node.isDefaultState() || node.hasState(_customState))
 			{
 				if (node.element != null) {
 						addChild(node.element);
@@ -121,11 +131,7 @@ class Button extends AbstractButton
 				x = _positions.x + _positions.x_selected;
 				y = _positions.y + _positions.y_selected;
 		}
-		
-		_currentState = value;
-		
-		return _currentState;
-	} 
+	}
 	
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
@@ -261,20 +267,21 @@ class Button extends AbstractButton
 			}
 			
 			if (guiButtonData.state != "") {
-				_additionalDefaultState = guiButtonData.state;
-				state = _additionalDefaultState;
+				_customState = guiButtonData.state;
+				handleState(_currentState);
 			}else {
-				_additionalDefaultState = "";
+				_customState = "";
 			}
 			onHoverParam = guiButtonData.onHover;
 			onClickParam = guiButtonData.click;
 			mouseCallback = guiButtonData.clickHandler;
 			disableMouseClick = mouseCallback != null ? false : true;
+			hasGUICallback = disableMouseClick;
 		}
 	}
 	public function removeData():Void
 	{
-		_additionalDefaultState = "";
+		_customState = "";
 		onHoverParam = "";
 		onClickParam = "";
 		mouseCallback = null;

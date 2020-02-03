@@ -27,6 +27,8 @@ class GUIShape extends Shape
 		_containerW = ContainerW;
 		_containerH = ContainerH;
 		
+		trace(_width, _height, _containerW, _containerH, Data.has.width, Data.has.height);
+		
 		if(Data.has.id)
 			name = Data.att.id;
 		
@@ -37,7 +39,7 @@ class GUIShape extends Shape
 			if (!Data.has.fill || Data.att.fill == "true") 
 				GraphicsUtils.drawRectFill(this.graphics, _width, _height, color);
 			else
-				GraphicsUtils.drawRect(this.graphics, _width, color, ParserUtils.getAtt(Data, "stroke", 1) );
+				GraphicsUtils.drawRect(this.graphics, _width, _height, color, ParserUtils.getAtt(Data, "stroke", 1) );
 		}else if (Data.name == "circle")
 		{
 			if (!Data.has.fill || Data.att.fill == "true") 

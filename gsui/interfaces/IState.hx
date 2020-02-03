@@ -1,13 +1,11 @@
 package gsui.interfaces;
 
 /**
- * Implements this interface if you want gsui communicates with custom classes
- * @author Loudo
+ * @author Ludovic Bas - www.lugludum.com
  */
-
 interface IState 
 {
-		function changeState(state:String):Void;
-		function getBackToPreviousState():Void;
-		function isState(state:String):Bool;
+	function update(time:Float):Void;
+	function onAdded():Void;
+	function onRemoved():Void;
 }

@@ -4,7 +4,7 @@ import openfl.display.Sprite;
 import haxe.xml.Fast;
 
 /**
- * ...render many elements automatically.
+ * ...render many buttons automatically.
  * @usage call setData(), addData(), removeData() to update
  * @author loudo
  */
