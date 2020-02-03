@@ -146,14 +146,18 @@ class GUITextField extends Sprite
 	public function set_text(v:String):String
 	{	
 		_textfield.htmlText = _upper ? v.toUpperCase() : v;
-		_positions = new ElementPosition(_data, _containerW, _containerH, _textfield.width, _textfield.textHeight);
+		if(_positions == null)
+			_positions = new ElementPosition(_data, _containerW, _containerH, _textfield.width, _textfield.textHeight);
+		else
+			_positions.init(_data, _containerW, _containerH, _textfield.width, _textfield.textHeight);
+			
 		x = _positions.x;
 		y = _positions.y;
 		#if flash
 		if (_strike && v != "") {//TODO utiliser textLineMetrics http://community.openfl.org/t/textfield-how-i-get-char-bound/804/10
 			var startPt:Point=new Point(_textfield.getCharBoundaries(0).x,_textfield.getCharBoundaries(0).y);
 			var h:Float=_textfield.getLineMetrics(0).height-_textfield.getLineMetrics(0).leading;
-			var _strikeShape:Shape=new Shape();
+			var _strikeShape = new Shape();
 			_strikeShape.x=_textfield.x;
 			_strikeShape.y=_textfield.y;
 			_strikeShape.graphics.lineStyle(3);

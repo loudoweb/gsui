@@ -31,6 +31,11 @@ class ElementPosition
 	
 	public function new(fast:Fast, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float) 
 	{
+		init(fast, parentWidth, parentHeight, elementWidth, elementHeight);
+	}
+	
+	public function init(fast:Fast, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float)
+	{
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
 		
@@ -90,6 +95,7 @@ class ElementPosition
 			trace("ElementPosition don't have any parameter");
 		}
 	}
+	
 	public function vAlign(elementHeight:Float):Float
 	{
 		y =  (parentHeight  - elementHeight) * 0.5;

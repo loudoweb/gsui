@@ -1,4 +1,5 @@
 package gsui.display;
+import gsui.utils.ParserUtils;
 import gsui.utils.XMLUtils;
 import openfl.display.Bitmap;
 import openfl.display.PixelSnapping;
@@ -23,6 +24,7 @@ class Button extends AbstractButton
 {
 	var _width:Float;
 	var _height:Float;
+	var _isAutoSize:Bool;
 	
 	var _nodes:Array<GUINode>;
 	
@@ -99,9 +101,9 @@ class Button extends AbstractButton
 						if (Std.is(node.element, GUITextField) && node.data.has.hoverColor)//hack for text
 						{
 							if (value == "hover") {
-								cast(node.element, GUITextField).textColor = Std.parseInt(node.data.att.hoverColor);
+								cast(node.element, GUITextField).textColor = ParserUtils.getColor(node.data, "hoverColor");
 							}else {
-								cast(node.element, GUITextField).textColor = Std.parseInt(node.data.att.color);
+								cast(node.element, GUITextField).textColor = ParserUtils.getColor(node.data);
 							}
 						}
 				}
@@ -135,18 +137,15 @@ class Button extends AbstractButton
 		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
 		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
 		
-		if (Data.has.size && Data.att.size == "firstChild")
+		_isAutoSize = Data.has.size && Data.att.size == "auto";
+		
+		if (_isAutoSize)
 		{
 			_width = Std.parseFloat(XMLUtils.getFirstChild(Data).att.width);
 			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
 		}
 		
 		_keepSelect = Data.has.keepSelect ? Data.att.keepSelect == "true" : false;
-		
-		_positions = new ElementPosition(Data, ContainerW, ContainerH, _width, _height);
-		
-		x = _positions.x;
-		y = _positions.y;
 		
 		if (Data.has.scale)
 			scaleX = scaleY = Std.parseFloat(Std.string(Data.att.scale));
@@ -164,6 +163,11 @@ class Button extends AbstractButton
 		}
 		
 		_nodes = GUI._parseXML(Data, _width, _height);
+		
+		_positions = new ElementPosition(Data, ContainerW, ContainerH, _width, _height);
+		
+		x = _positions.x;
+		y = _positions.y;
 		
 		state = "up";
 		init();

@@ -28,13 +28,13 @@ class ParserUtils
 		}
 	}
 	
-	public static function getColor(Data:Fast, ?DefaultData:Fast):Int
+	public static function getColor(Data:Fast, attribute:String = "color", ?DefaultData:Fast):Int
 	{
 		var colorDef = null;
-		if (Data.has.color)
+		if (Data.has.resolve(attribute))
 		{
-			colorDef = GUI._getDef(Data.att.color);
-			return colorDef  != null ? parseColor(colorDef.att.value) : parseColor(Data.att.color);
+			colorDef = GUI._getDef(Data.att.resolve(attribute));
+			return colorDef  != null ? parseColor(colorDef.att.value) : parseColor(Data.att.resolve(attribute));
 			
 			
 		}else if (DefaultData != null && DefaultData.has.color) {
