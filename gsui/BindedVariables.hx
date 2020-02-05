@@ -33,13 +33,20 @@ class BindedVariables
 	}
 	public function registerTextField(t:GUITextField):Void
 	{
-		bindedTextFields.push(t);
+		if(bindedTextFields.indexOf(t) == -1)
+			bindedTextFields.push(t);
+	}
+	public function unregisterTextField(t:GUITextField):Void
+	{
+		if(bindedTextFields.indexOf(t) != -1)
+			bindedTextFields.remove(t);
 	}
 	private function update():Void
 	{
 		for (textfield in bindedTextFields)
 		{
-			textfield.text = value;
+			trace(textfield.sourceText);
+			textfield.updateText(textfield.sourceText);
 		}
 	}
 	

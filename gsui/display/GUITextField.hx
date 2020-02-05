@@ -27,6 +27,10 @@ class GUITextField extends Sprite implements IDebuggable
 class GUITextField extends Sprite
 #end
 {
+	public static var TONGUE_VAR:EReg = new EReg("{#[a-zA-Z0-9-_]+}", "ig");
+	public static var GUI_VAR:EReg = new EReg("{[a-zA-Z0-9-_ ]+}", "ig");
+	
+	public var sourceText:String;
 	@:isVar public var text(get, set):String;
 	@:isVar public var textColor(get, set):UInt;
 	var _textfield:TextField;
@@ -142,7 +146,59 @@ class GUITextField extends Sprite
 			_strike = textDef.att.strike == "true";
 		
 		addChild(_textfield);
+		
+		if (Data.has.text) {
+			updateText(Data.att.text);
+		}else if (Data.innerHTML != "") {
+			updateText(Data.innerData);
+		}else {
+			updateText("");
+		}
 	}
+	
+	public function updateText(?sourceText:String):String
+	{
+		if (sourceText != null)
+			this.sourceText = sourceText;
+			
+		var destText = sourceText;
+			
+		//translated text
+		var tongue = GUI.TONGUE;
+		if (tongue != null)
+		{
+			destText = TONGUE_VAR.map(destText, function (e) {
+				var currentMatch = e.matched(0);
+				return  tongue.get(currentMatch.substring(1, currentMatch.length - 1), "interface", true);
+			  
+			});
+		}else if(destText.indexOf("{#") != -1){
+			trace("tongue is null and you try to use a localized text : " + destText);
+		}
+		//variable
+		var _this = this;
+		destText = GUI_VAR.map(destText, function (e) {
+			var currentMatch = e.matched(0);
+			trace(currentMatch);
+			//use binded variables
+			var binder:BindedVariables;
+			var variables = GUI._bindedVariables;
+			if (variables.exists(currentMatch))
+			{
+				binder = variables.get(currentMatch);
+			}else {
+				binder = new BindedVariables(currentMatch, "");
+				variables.set(currentMatch, binder);
+			}
+			binder.registerTextField(_this);
+			return binder.value;
+          
+        });
+		trace('dest', destText);
+		this.text = destText;
+		return destText;
+	}
+	
 	public function set_text(v:String):String
 	{	
 		_textfield.htmlText = _upper ? v.toUpperCase() : v;
