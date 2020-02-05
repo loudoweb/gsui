@@ -287,6 +287,7 @@ class GUI extends Sprite
 			_saturate(Std.string(el.att.saturate).split(","));
 		}
 		//create dynamic class to handle elements by custom code
+		/*
 		if(el.has.classes){
 			var classes:Array<String> = Std.string(el.att.classes).split(",");
 			for (curClass in classes)
@@ -294,7 +295,7 @@ class GUI extends Sprite
 				Type.createInstance(Type.resolveClass(_package + curClass), []);
 			}
 			
-		}
+		}*/
 		//handle state game with IStateManager
 		if (_gameState != null)
 		{
@@ -478,26 +479,36 @@ class GUI extends Sprite
 	}
 	public static function _setText(Text:String, TextField:GUITextField):String
 	{
-		if (Text.charAt(0) == "{") {
-			if (Text.charAt(1) == "$") {//use tongue
-				if (_tongue != null) {
-					Text = _tongue.get(Text.substring(1, Text.length - 1), "interface", true);
-				}else {
-					trace("tongue is null and you try to use a localized text : " + Text);
-				}
-			}else {//use binded variables
-				var binder:BindedVariables;
-				if (_bindedVariables.exists(Text))
-				{
-					binder = _bindedVariables.get(Text);
-				}else {
-					binder = new BindedVariables(Text, "");
-					_bindedVariables.set(Text, binder);
-				}
-				binder.registerTextField(TextField);
-				Text = binder.value;
-			}
+		var ereg;
+		//translated text
+		if (_tongue != null)
+		{
+			ereg = new EReg("{#[a-zA-Z0-9-_]+}", "ig");
+			Text = ereg.map(Text, function (e) {
+				var currentMatch = e.matched(0);
+				return  _tongue.get(currentMatch.substring(1, currentMatch.length - 1), "interface", true);
+			  
+			});
+		}else if(Text.indexOf("{#") != -1){
+			trace("tongue is null and you try to use a localized text : " + Text);
 		}
+		//variable
+		ereg = new EReg("{[a-zA-Z0-9-_]+}", "ig");
+		Text = ereg.map(Text, function (e) {
+			var currentMatch = e.matched(0);
+			//use binded variables
+			var binder:BindedVariables;
+			if (_bindedVariables.exists(currentMatch))
+			{
+				binder = _bindedVariables.get(currentMatch);
+			}else {
+				binder = new BindedVariables(currentMatch, "");
+				_bindedVariables.set(currentMatch, binder);
+			}
+			binder.registerTextField(TextField);
+			return binder.value;
+          
+        });
 		TextField.text = Text;
 		return Text;
 	}

@@ -47,7 +47,7 @@ class GUISlider extends Sprite implements IBindable
 			var sliderOn:BitmapData = buttonDef.has.hover ? GUI._getBitmapData(buttonDef.att.hover) : null;
 			//TODO use SliderButton
 			_button = new SimpleButton(sliderOff, sliderOn, sliderOn, buttonDef, _bg.width, _bg.height);
-			_button.hasGUICallback = false;
+			_button.disableGUICallback = true;
 			_button.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
 			_slide = new Sprite();
 			addChild(_slide);

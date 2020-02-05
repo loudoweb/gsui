@@ -17,16 +17,20 @@ enum State {
 }
 class SimpleButton extends AbstractButton
 {
-	private var _default:Bitmap = null;
-	private var _hover:Bitmap  = null;
-	private var _selected:Bitmap  = null;
+	
 	public var state:State;
+	
+	var _default:Bitmap = null;
+	var _hover:Bitmap  = null;
+	var _selected:Bitmap  = null;
 	
 	public function new(Up:BitmapData, Hover:BitmapData, Selected:BitmapData, Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
 		super(Data.has.click ? Data.att.click : "", Data.has.onHover ? Data.att.onHover : "");
+		
 		if(Data.has.id)
 			name = Data.att.id;
+			
 		if (Up == null)
 			trace("attribute name missing in " + Data.x.toString());
 		_default = new Bitmap(Up, PixelSnapping.AUTO, true);
@@ -41,6 +45,7 @@ class SimpleButton extends AbstractButton
 		
 		x = _positions.x;
 		y = _positions.y;
+		
 		if (Data.has.scale)
 			scaleX = scaleY = Std.parseFloat(Std.string(Data.att.scale));
 		if (Data.has.sW)
@@ -52,6 +57,9 @@ class SimpleButton extends AbstractButton
 		
 		if(_positions.mask != null)
 			MaskUtils.createMask(this, _positions.mask);
+			
+		if (Data.has.param)
+			customClickParam = Data.att.param;
 		
 		addChild(_default);
 		state = DEFAULT;

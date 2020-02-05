@@ -166,6 +166,7 @@ class GUIGroup extends Sprite
 	}
 	
 	/**
+	 * Get child through display list
 	 * //TODO cast inside this function
 	 * @param	name .name (all child arbo) name (direct child) name.name (arbo)
 	 * @return
@@ -199,6 +200,11 @@ class GUIGroup extends Sprite
 		}
 		return null;
 	}
+	/**
+	 * Get direct child of certain name
+	 * @param	name
+	 * @return
+	 */
 	private function getDirectChild(name:String):DisplayObject
 	{
 		for (node in _nodes)
@@ -208,7 +214,11 @@ class GUIGroup extends Sprite
 		}
 		return null;
 	}
-	@:generic public function getChildOf<T:DisplayObject>(name:String, type:Class<T>):T
+	/**
+	 * Get direct child of certain name and type T.
+	 * //old name : getChildOf
+	 */
+	@:generic public function getChildByType<T:DisplayObject>(name:String, type:Class<T>):T
 	{
 		for (node in _nodes)
 		{
@@ -217,7 +227,11 @@ class GUIGroup extends Sprite
 		}
 		return null;
 	}
-	@:generic public function getElementsOf<T:DisplayObject>(type:Class<T>):Array<T>
+	/**
+	 * Find all direct children of type T
+	 * old name : getElementsOf
+	 */
+	@:generic public function getChildrenByType<T:DisplayObject>(type:Class<T>):Array<T>
 	{
 		var elementsOfType:Array<T> = [];
 		for (node in _nodes)
@@ -226,6 +240,27 @@ class GUIGroup extends Sprite
 				elementsOfType.push(cast node.element);
 		}
 		return elementsOfType;
+	}
+	/**
+	 * Find all elements of type T in all display list
+	 */
+	public function getElementsByType<T:DisplayObject>(type:Class<T>, ?arr:Array<T> ):Array<T>
+	{
+		if (arr == null)
+			arr = [];
+			
+		for (node in _nodes)
+		{
+			if (Std.is(node.element, type))
+			{
+				arr.push(cast node.element);
+			}
+			if (Std.is(node.element, GUIGroup)) {
+				var group:GUIGroup = cast node.element;
+				group.getElementsByType(type, arr);
+			}
+		}
+		return arr;
 	}
 	#if debug
 	public function drawDebug():Void

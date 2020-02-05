@@ -2,6 +2,7 @@ package gsui.display;
 import gsui.utils.ParserUtils;
 import openfl.display.Sprite;
 import haxe.xml.Fast;
+import openfl.geom.Rectangle;
 
 /**
  * ...render many buttons automatically.
@@ -108,6 +109,11 @@ class GUIRender extends Sprite
 		{
 			x = (_containerW  - width) * 0.5;
 		}
+		/*if (height > _height && this.scrollRect == null)
+		{
+			this.scrollRect = new Rectangle(0, 0, _width, _height);
+			//TODO make element scrollable
+		}*/
 	}
 	public function setData(data:Array<GuiButtonData>):Void
 	{

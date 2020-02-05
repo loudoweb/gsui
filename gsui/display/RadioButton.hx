@@ -24,7 +24,7 @@ class RadioButton extends CheckBox
 				checked = true;
 				addChild(_check);
 				if (parent != null) {
-					var connectedRadio = cast(parent, GUIGroup).getElementsOf(RadioButton);
+					var connectedRadio = cast(parent, GUIGroup).getChildrenByType(RadioButton);
 					for (it in connectedRadio) 
 					{
 						if(it != this)

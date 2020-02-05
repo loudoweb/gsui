@@ -23,6 +23,9 @@ class Button extends AbstractButton implements IDebuggable
 class Button extends AbstractButton
 #end
 {
+	public var state(get, set):String;
+	function get_state():String{ return _currentState; } 
+	
 	var _width:Float;
 	var _height:Float;
 	var _isAutoSize:Bool;
@@ -36,10 +39,16 @@ class Button extends AbstractButton
 	#end
 	
 	var _data:GuiButtonData = null;
-	var _customState:String = "";//only one additional default state per button activated at a time
+	/**
+	 * only one additional default state per button activated at a time
+	 */
+	var _customState:String = "";
+	/**
+	 * States for a button : up, hover, selected.
+	 * These states can be mixed with default "" and _customState
+	 */
 	var _currentState:String = "";
-	public var state(get, set):String;
-	function get_state():String{ return _currentState; } 
+	
 
 	function set_state(value:String):String { 
 		if (_currentState == value)
@@ -168,6 +177,9 @@ class Button extends AbstractButton
 			this.graphics.endFill();
 		}
 		
+		if (Data.has.param)
+			customClickParam = Data.att.param;
+		
 		_nodes = GUI._parseXML(Data, _width, _height);
 		
 		_positions = new ElementPosition(Data, ContainerW, ContainerH, _width, _height);
@@ -272,18 +284,18 @@ class Button extends AbstractButton
 			}else {
 				_customState = "";
 			}
-			onHoverParam = guiButtonData.onHover;
-			onClickParam = guiButtonData.click;
+			customHoverParam = guiButtonData.onHover;
+			customClickParam = guiButtonData.click;
 			mouseCallback = guiButtonData.clickHandler;
-			disableMouseClick = mouseCallback != null ? false : true;
-			hasGUICallback = disableMouseClick;
+			//disableMouseClick = mouseCallback != null ? false : true;
+			//disableGUICallback = disableMouseClick;
 		}
 	}
 	public function removeData():Void
 	{
 		_customState = "";
-		onHoverParam = "";
-		onClickParam = "";
+		customHoverParam = "";
+		customClickParam = "";
 		mouseCallback = null;
 		if (_data != null)
 		{

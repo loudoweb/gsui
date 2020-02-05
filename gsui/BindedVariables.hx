@@ -4,6 +4,7 @@ import gsui.display.GUITextField;
 /**
  * Create a variable and add as many textfields you like, when the value changes, the textfields will be updated
  * //TODO use generic <T> and not TextField but what to do with textfield.text = value ? ...=>typedef ?
+ * //TODO destroy on removed from stage
  * @author loudo
  */
 class BindedVariables
