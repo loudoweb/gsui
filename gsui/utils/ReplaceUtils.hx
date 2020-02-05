@@ -3,6 +3,7 @@ import gsui.GUI.Tongue;
 
 /**
  * Helper to replace ids by text in current language
+ * TODO move from guitextfield to here
  * @author Loudo
  */
 class ReplaceUtils

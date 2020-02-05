@@ -115,6 +115,7 @@ class GUI extends Sprite
 	/**
 	 * binded variables for textfields
 	 */
+	@:allow(gsui.display.GUITextField)
 	static var _bindedVariables:StringMap<BindedVariables>;
 	
 	static var _transition:StringMap<Transition>;
@@ -128,12 +129,12 @@ class GUI extends Sprite
 	static var _package:String;
 	static var _gameState:IStateManager;
 	
-	static var _tongue:Tongue;
 	static var _cursor:ICustomCursor;
 	static var _transitionFactory:ITransitionFactory;
 	
-	static public var guiWidth(default, null):Float;
-	static public var guiHeight(default, null):Float;
+	static public var GUI_WIDTH(default, null):Float;
+	static public var GUI_HEIGHT(default, null):Float;
+	static public var TONGUE:Tongue;
 
 	/**
 	 * 
@@ -142,21 +143,22 @@ class GUI extends Sprite
 	 * @param	basePath base path of assets
 	 * @param	width same as of your xml interface
 	 * @param	height same as of your xml interface
-	 * @param	tongue allow to convert variable in current language.
+	 * @param	TONGUE allow to convert variable in current language.
 	 */
 	public function new(xml:String, conf:String, basePath:String, width:Float, height:Float, tongue:Tongue =  null, transition:ITransitionFactory = null) 
 	{
 		super();
 		instance = this;
 		
-		_basePath = basePath;
-		_tongue = tongue;
-		_transitionFactory = transition;
+		TONGUE = tongue;
+		GUI_WIDTH = width;
+		GUI_HEIGHT = height;
 		
+		_basePath = basePath;
+		_transitionFactory = transition;
 		_package = "";
 		
-		guiWidth = width;
-		guiHeight = height;
+		
 		
 		//InterfaceMacro.init(xml);
 		
@@ -183,8 +185,8 @@ class GUI extends Sprite
 	
 	public static function setDimension(width:Float, height:Float):Void
 	{
-		guiWidth = width;
-		guiHeight = height;
+		GUI_WIDTH = width;
+		GUI_HEIGHT = height;
 	}
 	
 	/**
@@ -224,7 +226,7 @@ class GUI extends Sprite
 		for (gui in guis)
 		{
 			if(!_views.exists(gui)){
-				groupRoot = cast _parseGroup(_viewsConf.get(gui), guiWidth, guiHeight);
+				groupRoot = cast _parseGroup(_viewsConf.get(gui), GUI_WIDTH, GUI_HEIGHT);
 				_views.set(gui, groupRoot);
 				instance.addChild(groupRoot);
 				_activeTopViews.set(gui, groupRoot);
@@ -270,7 +272,7 @@ class GUI extends Sprite
 		for (gui in guis)
 		{
 			if(!_views.exists(gui)){
-				groupRoot = cast _parseGroup(_viewsConf.get(gui), guiWidth, guiHeight);
+				groupRoot = cast _parseGroup(_viewsConf.get(gui), GUI_WIDTH, GUI_HEIGHT);
 				_views.set(gui, groupRoot);
 			}else {
 				groupRoot = _views.get(gui);
@@ -465,52 +467,7 @@ class GUI extends Sprite
 	{
 		
 		//create textfield
-		var textField:GUITextField = new GUITextField(el, parentWidth, parentHeight);
-		//handle text
-		var text:String = "";
-		if (el.has.text) {
-			text = _setText(el.att.text, textField);
-		}else if(el.innerHTML != "") {
-			textField.text = el.innerData;
-		}else {
-			textField.text = text;
-		}
-		return textField;
-	}
-	public static function _setText(Text:String, TextField:GUITextField):String
-	{
-		var ereg;
-		//translated text
-		if (_tongue != null)
-		{
-			ereg = new EReg("{#[a-zA-Z0-9-_]+}", "ig");
-			Text = ereg.map(Text, function (e) {
-				var currentMatch = e.matched(0);
-				return  _tongue.get(currentMatch.substring(1, currentMatch.length - 1), "interface", true);
-			  
-			});
-		}else if(Text.indexOf("{#") != -1){
-			trace("tongue is null and you try to use a localized text : " + Text);
-		}
-		//variable
-		ereg = new EReg("{[a-zA-Z0-9-_]+}", "ig");
-		Text = ereg.map(Text, function (e) {
-			var currentMatch = e.matched(0);
-			//use binded variables
-			var binder:BindedVariables;
-			if (_bindedVariables.exists(currentMatch))
-			{
-				binder = _bindedVariables.get(currentMatch);
-			}else {
-				binder = new BindedVariables(currentMatch, "");
-				_bindedVariables.set(currentMatch, binder);
-			}
-			binder.registerTextField(TextField);
-			return binder.value;
-          
-        });
-		TextField.text = Text;
-		return Text;
+		return new GUITextField(el, parentWidth, parentHeight);
 	}
 	/**
 	 * Group factory
@@ -755,8 +712,8 @@ class GUI extends Sprite
 				for (i in 0...coupleVar.length)
 				{
 					var varValue:String = coupleValue[i];
-					if (_tongue != null && varValue.charAt(0) == "$")
-							varValue = ReplaceUtils.replaceTongue(_tongue.get(varValue, "interface", true), _tongue);
+					if (TONGUE != null && varValue.charAt(0) == "$")
+							varValue = ReplaceUtils.replaceTongue(TONGUE.get(varValue, "interface", true), TONGUE);
 					_bindVariable(coupleVar[i], varValue);
 				}
 		}

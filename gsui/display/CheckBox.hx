@@ -38,7 +38,7 @@ class CheckBox extends AbstractButton implements IBindable
 		addChild(_bg);
 		
 		_label = new GUITextField(GUI._getDef(Data.att.label_def), ContainerW, ContainerH);
-		GUI._setText(Data.att.label, _label);
+		_label.updateText(Data.att.label);
 		_label.x += _bg.width;
 		addChild(_label);
 		

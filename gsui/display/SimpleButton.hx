@@ -39,8 +39,8 @@ class SimpleButton extends AbstractButton
 		if(Selected != null)
 			_selected = new Bitmap(Selected, PixelSnapping.AUTO, true);
 		
-		var _width = Data.has.width ? Std.parseFloat(Data.att.width) : GUI.guiWidth;
-		var	_height = Data.has.height ? Std.parseFloat(Data.att.height): GUI.guiHeight;
+		var _width = Data.has.width ? Std.parseFloat(Data.att.width) : GUI.GUI_WIDTH;
+		var	_height = Data.has.height ? Std.parseFloat(Data.att.height): GUI.GUI_HEIGHT;
 		_positions = new ElementPosition(Data, ContainerW, ContainerH, _default.width, _default.height);//TODO warning differents width between default and hover
 		
 		x = _positions.x;
