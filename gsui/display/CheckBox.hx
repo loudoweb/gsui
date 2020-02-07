@@ -2,6 +2,7 @@ package gsui.display;
 import bindx.IBindable;
 import gsui.utils.DestroyUtils;
 import gsui.utils.GraphicsUtils;
+import gsui.display.GenericButton;
 import haxe.xml.Fast;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -13,7 +14,7 @@ import openfl.geom.Point;
  * Checkbox
  * @author loudo
  */
-class CheckBox extends AbstractButton implements IBindable
+class CheckBox extends GenericButton implements IBindable
 {
 
 	var _bg:Bitmap = null;

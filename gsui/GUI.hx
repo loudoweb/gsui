@@ -1,6 +1,6 @@
 package gsui;
 import gsui.ElementPosition;
-import gsui.display.AbstractButton;
+import gsui.display.GenericButton;
 import gsui.display.GUITextField;
 import gsui.display.SimpleButton;
 import gsui.display.Button;
@@ -678,7 +678,7 @@ class GUI extends Sprite
 		_activeTopViews.get(name).state = state;
 	}
 	
-	public static function _mouseHandler(button:AbstractButton, eventType:String, param:String):Void
+	public static function _mouseHandler(button:GenericButton, eventType:String, param:String):Void
 	{
 		if (param == "")
 			return;

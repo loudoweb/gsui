@@ -10,7 +10,7 @@ import openfl.events.MouseEvent;
  * There are 2 variables for click and 2 for hover which allow to call at the same time native ui call (GUI._mouseHandler) and custom callback
  * @author loudo
  */
-class AbstractButton extends Sprite implements IPositionUpdatable implements IDestroyable 
+class GenericButton extends Sprite implements IPositionUpdatable implements IDestroyable 
 {
 	
 	/**
@@ -32,7 +32,7 @@ class AbstractButton extends Sprite implements IPositionUpdatable implements IDe
 	/**
 	 * Custom mouse callback
 	 */
-	public var mouseCallback:AbstractButton->String->String->Void;
+	public var mouseCallback:GenericButton->String->String->Void;
 	
 	/**
 	 * disable native gui callback

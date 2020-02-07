@@ -18,9 +18,9 @@ import gsui.interfaces.IDebuggable;
  * @author loudo
  */
 #if debug
-class Button extends AbstractButton implements IDebuggable
+class Button extends GenericButton implements IDebuggable
 #else
-class Button extends AbstractButton
+class Button extends GenericButton
 #end
 {
 	public var state(get, set):String;

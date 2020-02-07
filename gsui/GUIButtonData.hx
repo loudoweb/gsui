@@ -1,5 +1,5 @@
 package gsui;
-import gsui.display.AbstractButton;
+import gsui.display.GenericButton;
 
 /**
  * ...
@@ -11,9 +11,9 @@ class GuiButtonData
 	public var texts:Array<GuiDataCouple>;
 	public var state:String;
 	public var onHover:String;
-	public var clickHandler:AbstractButton->String->String->Void;
+	public var clickHandler:GenericButton->String->String->Void;
 	public var click:String;
-	public function new(images:Array<GuiDataCouple>, texts:Array<GuiDataCouple>, state:String, onHover:String, click:String, ?clickHandler:AbstractButton->String->String->Void ) 
+	public function new(images:Array<GuiDataCouple>, texts:Array<GuiDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void ) 
 	{
 		this.images = images;
 		this.texts = texts;

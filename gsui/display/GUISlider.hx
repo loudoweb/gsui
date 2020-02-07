@@ -114,7 +114,7 @@ class GUISlider extends Sprite implements IBindable
 		setLabel((_slide.x + _slide.width / 2) / _bg.width);
 	}
 	
-	function _clickHandler(button:AbstractButton, eventType:String, param:String):Void
+	function _clickHandler(button:GenericButton, eventType:String, param:String):Void
 	{
 		//TODO push to update?
 		trace('click');

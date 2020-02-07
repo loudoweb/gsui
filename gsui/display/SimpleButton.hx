@@ -15,7 +15,7 @@ enum State {
 	HOVER;
 	SELECTED;
 }
-class SimpleButton extends AbstractButton
+class SimpleButton extends GenericButton
 {
 	
 	public var state:State;
