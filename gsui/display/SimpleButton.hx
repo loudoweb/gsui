@@ -63,6 +63,7 @@ class SimpleButton extends GenericButton
 		
 		addChild(_default);
 		state = DEFAULT;
+		_needRollListeners = _positions.hasOver;
 		init();
 	}
 	override private function doHover(e:MouseEvent):Void
@@ -122,6 +123,6 @@ class SimpleButton extends GenericButton
 		if (_positions.maskOver != null || _positions.maskSelected != null)
 			MaskUtils.createMask(this, _positions.mask);
 		state = DEFAULT;
-		handleListeners();
+		handleListeners(true);
 	}
 }

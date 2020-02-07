@@ -188,13 +188,12 @@ class Button extends GenericButton
 		y = _positions.y;
 		
 		state = "up";
+		_needRollListeners = true;
 		init();
 	}
 	
 	override private function doHover(e:MouseEvent):Void
 	{
-		trace(e);
-		trace(name, width, height);
 		if (!disableMouseClick)
 		{
 			if(!_keepSelect || (_keepSelect && _currentState != "selected")){
@@ -216,22 +215,6 @@ class Button extends GenericButton
 	{
 		state = "up";
 		super.unselect();
-	}
-	override private function handleListeners(add:Bool = true):Void
-	{
-		if (add) {
-			addEventListener(MouseEvent.MOUSE_DOWN, doSelected);
-			addEventListener(MouseEvent.MOUSE_UP, doSelected);
-			buttonMode = true;
-			addEventListener(MouseEvent.ROLL_OVER, doHover);
-			addEventListener(MouseEvent.ROLL_OUT, doHover);
-		}else {
-			removeEventListener(MouseEvent.MOUSE_DOWN, doSelected);
-			removeEventListener(MouseEvent.MOUSE_UP, doSelected);
-			buttonMode = false;
-			removeEventListener(MouseEvent.ROLL_OVER, doHover);
-			removeEventListener(MouseEvent.ROLL_OUT, doHover);
-		}
 	}
 	
 	override public function getSlot(name:String):Slot

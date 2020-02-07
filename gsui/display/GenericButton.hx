@@ -40,11 +40,12 @@ class GenericButton extends Sprite implements IPositionUpdatable implements IDes
 	 */
 	public var disableGUICallback:Bool;
 	
-	@:isVar public var disableMouseClick(default, set):Bool;
+	public var disableMouseClick(default, set):Bool;
 	
-	public var isHover:Bool;
+	public var isHover(default, null):Bool;
 	
 	var _positions:ElementPosition;
+	var _needRollListeners:Bool;
 	
 	public function new(ClickParam:String, HoverParam:String) 
 	{
@@ -57,6 +58,7 @@ class GenericButton extends Sprite implements IPositionUpdatable implements IDes
 		this.isHover = false;
 		this.disableMouseClick = false;
 		this.disableGUICallback = false;
+		this._needRollListeners = false;
 	}
 	private function init():Void
 	{
@@ -70,14 +72,14 @@ class GenericButton extends Sprite implements IPositionUpdatable implements IDes
 		if (add) {
 			addEventListener(MouseEvent.CLICK, doSelected);
 			buttonMode = true;
-			if(_positions.hasOver){
+			if(_needRollListeners){
 				addEventListener(MouseEvent.ROLL_OVER, doHover);//TODO add in a update function
 				addEventListener(MouseEvent.ROLL_OUT, doHover);//TODO add in a update function
 			}
 		}else {
 			removeEventListener(MouseEvent.CLICK, doSelected);
 			buttonMode = false;
-			if(_positions.hasOver){
+			if(_needRollListeners){
 				removeEventListener(MouseEvent.ROLL_OVER, doHover);
 				removeEventListener(MouseEvent.ROLL_OUT, doHover);
 			}
@@ -96,13 +98,12 @@ class GenericButton extends Sprite implements IPositionUpdatable implements IDes
 			
 			GUI._cursorOver();
 			
-			if (mouseCallback != null){
+			if (mouseCallback != null && customHoverParam != "")
 				mouseCallback(this, MouseEvent.ROLL_OVER, customHoverParam);
-			}
+			
 			if (!disableGUICallback && hoverParam != "")
-			{
 				GUI._mouseHandler(this, MouseEvent.ROLL_OVER, hoverParam);
-			}
+			
 			
 		}else {
 			isHover = false;
@@ -110,9 +111,10 @@ class GenericButton extends Sprite implements IPositionUpdatable implements IDes
 			GUI._cursorOut();
 			
 			
-			if (mouseCallback != null)
+			if (mouseCallback != null && customHoverParam != "")
 				mouseCallback(this, MouseEvent.ROLL_OUT, "");
-			/*if(disableGUICallback)
+				
+			/*if(!disableGUICallback)
 				GUI._mouseHandler(this, MouseEvent.ROLL_OUT, "");*/
 			
 		}
