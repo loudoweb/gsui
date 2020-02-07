@@ -1,5 +1,8 @@
 package gsui.display;
 
+import openfl.Assets;
+import openfl.display.Bitmap;
+import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 
 /**
@@ -24,6 +27,13 @@ class Slot extends Sprite
 		}*/
 		
 	}
+	
+	public function addImage(name:String):Void
+	{
+		//TODO Bitmap OR Atlas
+		addChild(new Bitmap(Assets.getBitmapData(name), PixelSnapping.AUTO, true));
+	}
+	
 	public function destroy():Void
 	{
 		removeAll();
