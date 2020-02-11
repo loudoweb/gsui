@@ -18,6 +18,10 @@ class GUIRender extends Sprite
 	var _width:Float;
 	var _height:Float;
 	
+	/**
+	 * layout v (vertical), h (horizontal), p (already placed), or column,row
+	 * @default h (horizontal)
+	 */
 	var _layout:String = "";//default h
 	
 	var _gap:Int;
@@ -69,7 +73,7 @@ class GUIRender extends Sprite
 			}else if (_layout == "v") {
 				row = maxItem;
 				_gap = gapH;
-			}else if(_layout== "p"){
+			}else if(_layout == "p"){
 				column = -1;
 				row = -1;
 			}else {
@@ -88,14 +92,24 @@ class GUIRender extends Sprite
 				nodes.push(cast(GUI._parseButton(el, _width, _height), Button));
 			}
 		}else {//need to be placed
+			var button:Button;
+			var buttonX:Float = 0;
+			var buttonY:Float = 0;
+			var i = 1;
 			for (j in 0...row)
 			{
-				itemRenderer.x.set("y", Std.string(j * gapH));
+				buttonY = j * gapH;
 				for (k in 0...column)
 				{
-					itemRenderer.x.set("x", Std.string(k * gapW));
-					itemRenderer = new Fast(itemRenderer.x);
-					nodes.push(cast(GUI._parseButton(itemRenderer, _width, _height), Button));
+					buttonX = k * gapW;
+					button = cast GUI._parseButton(itemRenderer, _width, _height);
+					button.setX(buttonX);
+					button.setY(buttonY);
+					if(itemRenderer.has.id)
+						button.name = itemRenderer.att.id + i;
+					nodes.push(button);
+					i++;
+					
 				}
 			}
 		}
@@ -115,7 +129,7 @@ class GUIRender extends Sprite
 			//TODO make element scrollable
 		}*/
 	}
-	public function setData(data:Array<GuiButtonData>):Void
+	public function setData(data:Array<GUIButtonData>):Void
 	{
 		if (data.length > maxItem) {
 			trace("too many data");
@@ -139,7 +153,7 @@ class GUIRender extends Sprite
 		trace(nodes);
 		updatePosition();
 	}
-	public function addData(data:Array<GuiButtonData>):Void
+	public function addData(data:Array<GUIButtonData>):Void
 	{
 		var begin:Int = items;
 		if (items + data.length > maxItem) {
@@ -176,7 +190,7 @@ class GUIRender extends Sprite
 	}
 	public function fitData():Void
 	{
-		var collectedData:Array<GuiButtonData> = [];
+		var collectedData:Array<GUIButtonData> = [];
 		//collect GuiButtonData
 		for (node in nodes)
 		{
@@ -212,6 +226,7 @@ class GUIRender extends Sprite
 	{
 		return nodes[index];
 	}
+	
 	public function removeFromParent():Void
 	{
 		if (parent != null) {

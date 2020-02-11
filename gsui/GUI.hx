@@ -19,6 +19,7 @@ import gsui.transition.ITransitionFactory;
 import gsui.transition.Transition;
 import gsui.utils.FilterUtils;
 import gsui.utils.MaskUtils;
+import gsui.utils.ParserUtils;
 import gsui.utils.ReplaceUtils;
 import haxe.ds.StringMap;
 import haxe.xml.Fast;
@@ -358,6 +359,11 @@ class GUI extends Sprite
 		}
 	}
 	
+	public static function getFast(groupName:String):Fast
+	{
+		return _viewsConf.get(groupName);
+	}
+	
 	/**
 	 * General Factory
 	 * @param	Data
@@ -453,7 +459,7 @@ class GUI extends Sprite
 	 */
 	public static function _parseGrid9(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
-		var image = new Sprite9Grid(Assets.getBitmapData(_basePath + el.att.img, true), el.has.width? Std.parseInt(el.att.width) : Std.int(parentWidth), el.has.height? Std.parseInt(el.att.height) : Std.int(parentHeight));
+		var image = new Sprite9Grid(Assets.getBitmapData(_basePath + el.att.img, true), Std.int(ParserUtils.getWidth(el, parentWidth)), Std.int(ParserUtils.getHeight(el, parentHeight)));
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
 	/**
@@ -580,12 +586,9 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseSlot(fast:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
-	{	
-		var display:Slot = new Slot();
-		if(fast.has.id)
-			display.name = fast.att.id;
-		return _placeDisplay(fast, display, parentWidth, parentHeight, 0, 0);
+	public static function _parseSlot(xml:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	{			
+		return new Slot(xml, parentWidth, parentHeight);
 	}
 	
 	/**

@@ -23,6 +23,8 @@ class Button extends GenericButton implements IDebuggable
 class Button extends GenericButton
 #end
 {
+	public var isRadio:Bool;
+	
 	public var state(get, set):String;
 	function get_state():String{ return _currentState; } 
 	
@@ -38,14 +40,14 @@ class Button extends GenericButton
 	var _debug:Bool = false;
 	#end
 	
-	var _data:GuiButtonData = null;
+	var _data:GUIButtonData = null;
 	/**
-	 * only one additional default state per button activated at a time
+	 * additional default states per button activated at a time
 	 */
-	var _customState:String = "";
+	var _customStates:String = "";
 	/**
 	 * States for a button : up, hover, selected.
-	 * These states can be mixed with default "" and _customState
+	 * These states can be mixed with default "" and _customStates
 	 */
 	var _currentState:String = "";
 	
@@ -68,7 +70,7 @@ class Button extends GenericButton
 		if(value != ""){
 			for (node in _nodes)
 			{
-				if(!node.isDefaultState() && !node.hasState(_customState)){
+				if(!node.isDefaultState() && !node.hasState(_customStates)){
 					if (node.element != null && node.element.parent != null) {
 						if (node.data.has.onOut)
 						{
@@ -90,7 +92,7 @@ class Button extends GenericButton
 		//add default (state == "") and current state (allow to replace in order element non removed too)
 		for (node in _nodes)
 		{
-			if (node.hasState(value) || node.isDefaultState() || node.hasState(_customState))
+			if (node.hasState(value) || node.isDefaultState() || node.hasState(_customStates))
 			{
 				if (node.element != null) {
 						addChild(node.element);
@@ -160,7 +162,10 @@ class Button extends GenericButton
 			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
 		}
 		
+		isRadio = Data.has.radio ? Data.att.radio == "true" : false;
 		_keepSelect = Data.has.keepSelect ? Data.att.keepSelect == "true" : false;
+		if (isRadio)
+			_keepSelect = true;
 		
 		if (Data.has.scale)
 			scaleX = scaleY = Std.parseFloat(Std.string(Data.att.scale));
@@ -210,6 +215,25 @@ class Button extends GenericButton
 	{
 		state = "selected";
 		super.select();
+		
+		
+		if (isRadio)
+		{
+			if (parent != null) {
+				for (it in parent.__children)
+				{
+					if (Std.is(it, Button))
+					{
+						if(it != this)
+							cast(it, Button).unselect();
+					}
+				}
+			}
+		}
+		
+		
+	
+		
 	}
 	override public function unselect():Void
 	{
@@ -237,7 +261,7 @@ class Button extends GenericButton
 		}
 		return null;
 	}
-	public function setData(guiButtonData:GuiButtonData):Void
+	public function setData(guiButtonData:GUIButtonData):Void
 	{
 		if (guiButtonData != null) {
 			_data = guiButtonData;
@@ -262,10 +286,10 @@ class Button extends GenericButton
 			}
 			
 			if (guiButtonData.state != "") {
-				_customState = guiButtonData.state;
+				_customStates = guiButtonData.state;
 				handleState(_currentState);
 			}else {
-				_customState = "";
+				_customStates = "";
 			}
 			customHoverParam = guiButtonData.onHover;
 			customClickParam = guiButtonData.click;
@@ -276,7 +300,7 @@ class Button extends GenericButton
 	}
 	public function removeData():Void
 	{
-		_customState = "";
+		_customStates = "";
 		customHoverParam = "";
 		customClickParam = "";
 		mouseCallback = null;
@@ -286,9 +310,15 @@ class Button extends GenericButton
 			_data = null;
 		}
 	}
-	public function getData():GuiButtonData
+	public function getData():GUIButtonData
 	{
 		return _data;
+	}
+	
+	public function setCustomStates(states:String, ?genericState:String):Void
+	{
+		_customStates = states;
+		handleState(genericState != null ? genericState : state);
 	}
 	
 	@:generic public function getChildOf<T:DisplayObject>(name:String, type:Class<T>):T

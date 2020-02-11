@@ -27,6 +27,8 @@ class GUIGroup extends Sprite
 	var _width:Float;
 	var _height:Float;
 	var _layout:ELayout;//default relative
+	var _gap:Float;
+	
 	public var isBackground:Bool = false;
 	#if debug
 	var _debug:Bool = false;
@@ -104,7 +106,7 @@ class GUIGroup extends Sprite
 		if (_layout != null)
 		{
 			//update nodes x and y
-			var gap:Float = Data.has.gap ? Std.parseFloat(Data.att.gap) : 0;
+			_gap = Data.has.gap ? Std.parseFloat(Data.att.gap) : 0;
 			var pWH:Float = 0;
 			for (node in _nodes)
 			{
@@ -116,13 +118,13 @@ class GUIGroup extends Sprite
 							cast(node.element, IPositionUpdatable).setX(pWH);
 						else
 							node.element.x = pWH;
-						pWH += node.element.width > 0 ? node.element.width + gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + gap;
+						pWH += node.element.width > 0 ? node.element.width + _gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + _gap;
 					case VERTICAL:
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setY(pWH);
 						else
 							node.element.y = pWH;
-						pWH += node.element.height > 0 ? node.element.height + gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + gap;
+						pWH += node.element.height > 0 ? node.element.height + _gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + _gap;
 						
 				}
 				
@@ -139,7 +141,15 @@ class GUIGroup extends Sprite
 		}
 		//update this x and y
 		GUI._placeDisplay(Data, this, ContainerW, ContainerH, _width, _height);
+
 	}
+	
+	public function onInvalidate():Void
+	{
+		//TODO iterate nodes and update everything
+	}
+	
+	
 	
 	public function removeFromParent():Void
 	{

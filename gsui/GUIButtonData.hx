@@ -5,15 +5,15 @@ import gsui.display.GenericButton;
  * ...
  * @author loudo
  */
-class GuiButtonData
+class GUIButtonData
 {
-	public var images:Array<GuiDataCouple>;
-	public var texts:Array<GuiDataCouple>;
+	public var images:Array<GUIDataCouple>;
+	public var texts:Array<GUIDataCouple>;
 	public var state:String;
 	public var onHover:String;
 	public var clickHandler:GenericButton->String->String->Void;
 	public var click:String;
-	public function new(images:Array<GuiDataCouple>, texts:Array<GuiDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void ) 
+	public function new(images:Array<GUIDataCouple>, texts:Array<GUIDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void ) 
 	{
 		this.images = images;
 		this.texts = texts;
@@ -33,7 +33,7 @@ class GuiButtonData
 	}
 	
 }
-class GuiDataCouple
+class GUIDataCouple
 {
 	public var gui:String;
 	public var value:String;

@@ -28,11 +28,27 @@ class GUINode
 		return State.split(",");
 	}
 	
+	/**
+	 * 
+	 * @param	State
+	 * @return
+	 */
 	public function hasState(State:String):Bool
 	{
 		if (State == DEFAULT)
 			return state[0] == DEFAULT;
+		if (State.indexOf(",") != -1)
+		{
+			var check = false;
+			for (s in State.split(","))
+			{
+				if (state.indexOf(s) != -1)
+					return true;
+			}
+			return false;
+		}
 		return state.indexOf(State) != -1;
+		
 	}
 	
 	public function isDefaultState():Bool

@@ -33,19 +33,20 @@ class GUIShape extends Shape
 			name = Data.att.id;
 		
 		var color = ParserUtils.getColor(Data);
+		var alpha = ParserUtils.getColorAlpha(Data);
 		
 		if (Data.name == "rect")
 		{
 			if (!Data.has.fill || Data.att.fill == "true") 
-				GraphicsUtils.drawRectFill(this.graphics, _width, _height, color);
+				GraphicsUtils.drawRectFill(this.graphics, _width, _height, color, alpha);
 			else
-				GraphicsUtils.drawRect(this.graphics, _width, _height, color, ParserUtils.getAtt(Data, "stroke", 1) );
+				GraphicsUtils.drawRect(this.graphics, _width, _height, color, ParserUtils.getAttInt(Data, "stroke", 1) );
 		}else if (Data.name == "circle")
 		{
 			if (!Data.has.fill || Data.att.fill == "true") 
-				GraphicsUtils.drawCircleFill(this.graphics, _width, color);
+				GraphicsUtils.drawCircleFill(this.graphics, _width, color, alpha);
 			else
-				GraphicsUtils.drawCircle(this.graphics, _width, color, ParserUtils.getAtt(Data, "stroke", 1) );
+				GraphicsUtils.drawCircle(this.graphics, _width, color, ParserUtils.getAttInt(Data, "stroke", 1) );
 		}
 		
 		_positions = new ElementPosition(Data, ContainerW, ContainerH, _width, _height);

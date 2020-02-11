@@ -117,6 +117,7 @@ Must be in fonts folder and have lowercase extension in ttf only.
 - [ ] documentation
 - [ ] remove bindx2 dependency ?
 - [ ] add macros to include classes from xml
+- [ ] Render should also handle CheckBox and Radio
 
 # dependencies
 - actuate
