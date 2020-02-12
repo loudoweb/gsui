@@ -119,7 +119,7 @@ class Base extends Sprite implements IDestroyable
 		{
 			useParentWidth = false;
 			usePercentWidth = ParserUtils.hasPercent(xml.att.width);
-			initWidth = ParserUtils.getAttFloat(xml, "width", parentWidth);
+			initWidth = ParserUtils.getWidth(xml, parentWidth);
 		}else{
 			useParentWidth = true;
 			usePercentWidth = false;
@@ -130,7 +130,7 @@ class Base extends Sprite implements IDestroyable
 		{
 			useParentHeight = false;
 			usePercentHeight = ParserUtils.hasPercent(xml.att.height);
-			initHeight = ParserUtils.getAttFloat(xml, "height", parentHeight);
+			initHeight = ParserUtils.getHeight(xml, parentHeight);
 		}else{
 			useParentHeight = true;
 			usePercentHeight = false;
