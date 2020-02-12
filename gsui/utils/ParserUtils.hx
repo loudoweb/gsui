@@ -21,14 +21,14 @@ class ParserUtils
 	inline static function getWidthValue(value:String, containerSize:Float):Float
 	{
 		if (value == "stage")
-			return ResizeHelper.WIDTH;
+			return ResizeHelper.WIDTH / ResizeHelper.RATIO;
 		else 
 			return getPercentValue(value, containerSize);
 	}
 	inline static function getHeightValue(value:String, containerSize:Float):Float
 	{
 		if (value == "stage")
-			return ResizeHelper.HEIGHT;
+			return ResizeHelper.HEIGHT / ResizeHelper.RATIO;
 		else 
 			return getPercentValue(value, containerSize);
 	}

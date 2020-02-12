@@ -54,14 +54,13 @@ class Base extends Sprite implements IDestroyable
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
 		
-		parse(xml);
-		
-		init();
+		onResize = new Event<Int->Int->Void>();
 		
 		this.addEventListener(OpenEvent.ADDED_TO_STAGE, onAdded);
 		
-		onResize = new Event<Int->Int->Void>();
+		parse(xml);
 		
+		init();
 		
 	}
 	
@@ -73,8 +72,12 @@ class Base extends Sprite implements IDestroyable
 		if (usePercentX || usePercentY || hasBottom || hasRight || usePercentWidth || usePercentHeight)
 		{
 			//TODO call init
-			var p:Base = cast this.parent;
-			p.onResize.add(onParentResize);
+			if (Std.is(this.parent, Base))
+			{
+				var p:Base = cast this.parent;
+				if(p != null)
+					p.onResize.add(onParentResize);
+			}
 		}
 	}
 	
@@ -82,6 +85,19 @@ class Base extends Sprite implements IDestroyable
 	{
 		this.removeEventListener(OpenEvent.REMOVED_FROM_STAGE, onRemoved);
 		this.addEventListener(OpenEvent.ADDED_TO_STAGE, onAdded);
+		
+		onResize.removeAll();
+		
+		if (usePercentX || usePercentY || hasBottom || hasRight || usePercentWidth || usePercentHeight)
+		{
+			//TODO call init
+			if (Std.is(this.parent, Base))
+			{
+				var p:Base = cast this.parent;
+				if(p != null)
+					p.onResize.remove(onParentResize);
+			}
+		}
 	}
 	
 	function onParentResize(parentWidth:Int, parentHeight:Int):Void{
@@ -173,7 +189,7 @@ class Base extends Sprite implements IDestroyable
 			initY = ParserUtils.getAttFloat(xml, "bottom", 0);
 			pivotY = 1;
 		}else{
-			initX = 0;
+			initY = 0;
 			usePercentY = false;
 		}
 		
@@ -221,7 +237,7 @@ class Base extends Sprite implements IDestroyable
 		{
 			if (usePercentX)
 			{
-				y = parentWidth - initX * parentWidth - pivotX * initWidth;
+				x = parentWidth - initX * parentWidth - pivotX * initWidth;
 			}else{
 				x = parentWidth - initX - pivotX * initWidth;
 			}

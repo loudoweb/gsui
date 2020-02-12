@@ -808,6 +808,7 @@ class GUI extends Sprite
 	{
 		return Assets.getBitmapData(_basePath + name);
 	}
+	
 	#if debug
 	public static function drawDebug():Void
 	{

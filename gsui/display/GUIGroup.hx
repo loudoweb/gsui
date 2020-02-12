@@ -8,6 +8,7 @@ import haxe.xml.Fast;
 import gsui.interfaces.IDebuggable;
 import openfl.events.MouseEvent;
 #end
+import openfl.events.Event;
 
 enum ELayout
 {
@@ -19,14 +20,12 @@ enum ELayout
  * @author loudo
  */
 #if debug
-class GUIGroup extends Sprite implements IDebuggable
+class GUIGroup extends Base implements IDebuggable
 #else
-class GUIGroup extends Sprite
+class GUIGroup extends Base
 #end
 {
-	var _width:Float;
-	var _height:Float;
-	var _layout:ELayout;//default relative
+	var _layout:ELayout;//default absolute
 	var _gap:Float;
 	
 	public var isBackground:Bool = false;
@@ -35,8 +34,11 @@ class GUIGroup extends Sprite
 	#end
 		
 	var _nodes:Array<GUINode>;
+	
 	var _currentState:String = "";
+	
 	public var state(get, set):String;
+	
 	function get_state():String{ return _currentState; } 
 
 	function set_state(value:String):String{ 
@@ -74,39 +76,46 @@ class GUIGroup extends Sprite
 	 */
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
-		super();
-		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
-		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
+		super(Data, ContainerW, ContainerH);
+	
+	}
+	
+	override function parse(xml:Fast):Void 
+	{
+		super.parse(xml);
 		
-		if (Data.has.size && Data.att.size == "firstChild")
+		if (xml.has.size && xml.att.size == "firstChild")
 		{
-			_width = Std.parseFloat(XMLUtils.getFirstChild(Data).att.width);
-			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
+			initWidth = Std.parseFloat(XMLUtils.getFirstChild(xml).att.width);
+			initHeight = Std.parseFloat(XMLUtils.getFirstChild(xml).att.height);
 		}
 		
-		isBackground = Data.has.background && Data.att.background == "true";
-		
-		name = Data.att.id;
-		
-		if (Data.has.mouseEnabled && Data.att.mouseEnabled == "false")
-			this.mouseEnabled = this.mouseChildren = false;
-		
-		_nodes = GUI._parseXML(Data, _width, _height);
-		
-		state = "";
+		isBackground = xml.has.background && xml.att.background == "true";
 				
-		switch(Data.name)
+		if (xml.has.mouseEnabled && xml.att.mouseEnabled == "false")
+			this.mouseEnabled = this.mouseChildren = false;
+			
+		_gap = xml.has.gap ? Std.parseFloat(xml.att.gap) : 0;
+		
+		_nodes = GUI._parseXML(xml, initWidth, initHeight);
+		
+		switch(xml.name)
 		{
 			case "boxV":
 			_layout = VERTICAL;
 			case "boxH":
 			_layout = HORIZONTAL;
 		}
+	}
+	
+	override public function init():Void 
+	{
+		state = "";
 		
 		if (_layout != null)
 		{
 			//update nodes x and y
-			_gap = Data.has.gap ? Std.parseFloat(Data.att.gap) : 0;
+			
 			var pWH:Float = 0;
 			for (node in _nodes)
 			{
@@ -114,16 +123,27 @@ class GUIGroup extends Sprite
 				switch(_layout)
 				{
 					case HORIZONTAL:
-						if (	Std.is(node.element, IPositionUpdatable))
+						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setX(pWH);
+						else if (Std.is(node.element, Base)){
+							cast(node.element, Base).initX = pWH;
+							cast(node.element, Base).init();
+						}
 						else
 							node.element.x = pWH;
 						pWH += node.element.width > 0 ? node.element.width + _gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + _gap;
 					case VERTICAL:
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setY(pWH);
+						else if (Std.is(node.element, Base))
+						{
+							
+							cast(node.element, Base).initY = pWH;
+							cast(node.element, Base).init();
+						}
 						else
 							node.element.y = pWH;
+						trace(this.name, pWH, node.element.name, node.element.height);
 						pWH += node.element.height > 0 ? node.element.height + _gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + _gap;
 						
 				}
@@ -134,22 +154,62 @@ class GUIGroup extends Sprite
 			switch(_layout)
 			{
 				case HORIZONTAL:
-					_width = width;
+					initWidth = width;
 				case VERTICAL:
-					_height = height;
+					initHeight = height;
 			}
+			
 		}
 		//update this x and y
-		GUI._placeDisplay(Data, this, ContainerW, ContainerH, _width, _height);
-
+		//GUI._placeDisplay(Data, this, ContainerW, ContainerH, initWidth, initHeight);
+		
+		super.init();
 	}
 	
-	public function onInvalidate():Void
+	override public function invalidate():Void 
 	{
-		//TODO iterate nodes and update everything
+		init();
+		super.invalidate();
 	}
 	
-	
+	function onChildResize(e:Event):Void
+	{
+		var pWH:Float = 0;
+		for (node in _nodes)
+		{
+			
+			switch(_layout)
+			{
+				case HORIZONTAL:
+					if (Std.is(node.element, IPositionUpdatable))
+						cast(node.element, IPositionUpdatable).setX(pWH);
+					else
+						node.element.x = pWH;
+					pWH += node.element.width > 0 ? node.element.width + _gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + _gap;
+				case VERTICAL:
+					if (Std.is(node.element, IPositionUpdatable))
+						cast(node.element, IPositionUpdatable).setY(pWH);
+					else
+						node.element.y = pWH;
+					pWH += node.element.height > 0 ? node.element.height + _gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + _gap;
+					
+			}
+			
+		}
+		//only if width and height not specified in xml
+		//update width or height after layouting to permit good x and y placement for this
+		switch(_layout)
+		{
+			case HORIZONTAL:
+				initWidth = width;
+			case VERTICAL:
+				initHeight = height;
+		}
+		
+		//update this x and y
+		//TODO use AlignUtils instead of ...
+		//GUI._placeDisplay(Data, this, ContainerW, ContainerH, initWidth, initHeight);
+	}
 	
 	public function removeFromParent():Void
 	{

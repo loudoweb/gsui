@@ -137,7 +137,6 @@ class GUIRender extends Sprite
 		}
 		items = data.length;
 		var i:Int = 0;
-		trace(nodes, items);
 		for (node in nodes)
 		{
 			if (i < items) {
@@ -150,8 +149,7 @@ class GUIRender extends Sprite
 			}
 			++i;
 		}
-		trace(nodes);
-		updatePosition();
+		setDirty();
 	}
 	public function addData(data:Array<GUIButtonData>):Void
 	{
@@ -172,6 +170,7 @@ class GUIRender extends Sprite
 					node.parent.removeChild(node);
 			}
 		}
+		setDirty();
 	}
 	public function removeData(indexes:Array<Int>):Void
 	{
@@ -187,6 +186,7 @@ class GUIRender extends Sprite
 			if(node.parent != null)
 				node.parent.removeChild(node);
 		}
+		setDirty();
 	}
 	public function fitData():Void
 	{
@@ -210,6 +210,16 @@ class GUIRender extends Sprite
 				node.parent.removeChild(node);
 		}
 		items = 0;
+		
+		setDirty();
+	}
+	public function setDirty():Void
+	{
+		if (this.parent != null)
+		{
+			this.parent.invalidate();
+		}
+		updatePosition();//TODO merge with Base.init()
 	}
 	public function getButtonIndex(button:Button):Int
 	{
