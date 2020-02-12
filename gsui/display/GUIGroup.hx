@@ -49,7 +49,18 @@ class GUIGroup extends Base
 		{
 			if(!node.isDefaultState()){
 				if (node.element != null && node.element.parent != null) {
-					node.element.parent.removeChild(node.element);
+					if (node.data.has.onOut)
+					{
+						var i = 0;
+						for (onOut in node.data.att.onOut.split(","))
+						{
+							GUI.getTransition(onOut).start(node.element, i == 0 ? function() {node.element.parent.removeChild(node.element); } : null);
+							i++;
+						}
+						
+					}else{
+						node.element.parent.removeChild(node.element);
+					}
 				}
 			}
 		}
@@ -61,6 +72,14 @@ class GUIGroup extends Base
 			{
 				if (node.element != null) {
 						addChild(node.element);
+						
+						if (node.data.has.onIn)
+						{
+							for (onIn in node.data.att.onIn.split(","))
+							{
+								GUI.getTransition(onIn).start(node.element);
+							}
+						}
 				}
 			}
 		}

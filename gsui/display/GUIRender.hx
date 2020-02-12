@@ -140,9 +140,15 @@ class GUIRender extends Sprite
 		for (node in nodes)
 		{
 			if (i < items) {
-				trace('addchild');
 				addChild(node);
 				node.setData(data[i]);
+				if (node.onIn != "")
+				{
+					for (onIn in node.onIn.split(","))
+					{
+						GUI.getTransition(onIn).start(node);
+					}
+				}
 			}else {
 				if(node.parent != null)
 					node.parent.removeChild(node);

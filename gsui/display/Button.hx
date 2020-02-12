@@ -11,6 +11,11 @@ import openfl.display.DisplayObject;
 import gsui.interfaces.IDebuggable;
 #end
 
+enum EButtonehavior{
+	NONE;
+	RADIO;
+	CHECKBOX;
+}
 /**
  * Advanced Button where you can put as many things you want including texts
  * TODO externalize get assets and parsing data
@@ -23,7 +28,10 @@ class Button extends GenericButton implements IDebuggable
 class Button extends GenericButton
 #end
 {
-	public var isRadio:Bool;
+	public var behaviour:EButtonehavior;
+	public var onIn:String;
+	public var onOut:String;
+	//TODO onClickRequested
 	
 	public var state(get, set):String;
 	function get_state():String{ return _currentState; } 
@@ -33,9 +41,7 @@ class Button extends GenericButton
 	var _isAutoSize:Bool;
 	
 	var _nodes:Array<GUINode>;
-	
-	var _keepSelect:Bool = false;
-	
+		
 	#if debug
 	var _debug:Bool = false;
 	#end
@@ -154,6 +160,9 @@ class Button extends GenericButton
 		_width = Data.has.width ? Std.parseFloat(Data.att.width) : ContainerW;
 		_height = Data.has.height ? Std.parseFloat(Data.att.height) : ContainerH;
 		
+		onIn = Data.has.onIn ? Data.att.onIn : "";
+		onOut = Data.has.onOut ? Data.att.onOut : "";
+		
 		_isAutoSize = Data.has.size && Data.att.size == "auto";
 		
 		if (_isAutoSize)
@@ -162,11 +171,8 @@ class Button extends GenericButton
 			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
 		}
 		
-		isRadio = Data.has.radio ? Data.att.radio == "true" : false;
-		_keepSelect = Data.has.keepSelect ? Data.att.keepSelect == "true" : false;
-		if (isRadio)
-			_keepSelect = true;
-		
+		behaviour = Data.has.behaviour ? Type.createEnum(EButtonehavior, Data.att.behaviour.toUpperCase()) : NONE;
+				
 		if (Data.has.scale)
 			scaleX = scaleY = Std.parseFloat(Std.string(Data.att.scale));
 		if (Data.has.sW)
@@ -201,7 +207,7 @@ class Button extends GenericButton
 	{
 		if (!disableMouseClick)
 		{
-			if(!_keepSelect || (_keepSelect && _currentState != "selected")){
+			if(behaviour == NONE || _currentState != "selected"){
 				if (e.type == MouseEvent.ROLL_OVER) {
 					state = "hover";
 				}else {
@@ -213,24 +219,31 @@ class Button extends GenericButton
 	}
 	override public function select():Void
 	{
-		state = "selected";
-		super.select();
-		
-		
-		if (isRadio)
+		switch(behaviour)
 		{
-			if (parent != null) {
-				for (it in parent.__children)
-				{
-					if (Std.is(it, Button))
+			case NONE:
+				state = "selected";
+			case RADIO:
+				state = "selected";
+				if (parent != null) {
+					for (it in parent.__children)
 					{
-						if(it != this)
-							cast(it, Button).unselect();
+						if (Std.is(it, Button))
+						{
+							if(it != this)
+								cast(it, Button).unselect();
+						}
 					}
 				}
-			}
+			case CHECKBOX:
+				if (state != "selected")
+					state = "selected";
+				else
+					unselect();
+				
 		}
 		
+		super.select();
 		
 	
 		
@@ -270,7 +283,6 @@ class Button extends GenericButton
 				{
 					var slot:Slot = getSlot(guiButtonData.images[i].gui);
 					slot.removeAll();
-					trace(guiButtonData.images[i].value);
 					if(guiButtonData.images[i].value != "")
 						slot.addChild(new Bitmap(Assets.getBitmapData(guiButtonData.images[i].value), PixelSnapping.AUTO, true));
 					
@@ -294,6 +306,7 @@ class Button extends GenericButton
 			customHoverParam = guiButtonData.onHover;
 			customClickParam = guiButtonData.click;
 			mouseCallback = guiButtonData.clickHandler;
+			behaviour = guiButtonData.behaviour;
 			//disableMouseClick = mouseCallback != null ? false : true;
 			//disableGUICallback = disableMouseClick;
 		}

@@ -1,4 +1,5 @@
 package gsui;
+import gsui.display.Button.EButtonehavior;
 import gsui.display.GenericButton;
 
 /**
@@ -13,7 +14,9 @@ class GUIButtonData
 	public var onHover:String;
 	public var clickHandler:GenericButton->String->String->Void;
 	public var click:String;
-	public function new(images:Array<GUIDataCouple>, texts:Array<GUIDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void ) 
+	public var behaviour:EButtonehavior;
+	
+	public function new(images:Array<GUIDataCouple>, texts:Array<GUIDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void, ?behaviour:EButtonehavior ) 
 	{
 		this.images = images;
 		this.texts = texts;
@@ -21,6 +24,7 @@ class GUIButtonData
 		this.onHover = onHover;
 		this.clickHandler = clickHandler;
 		this.click = click;
+		this.behaviour = behaviour != null ? behaviour : NONE;
 	}
 	public function destroy():Void
 	{

@@ -17,6 +17,7 @@ import motion.easing.Quad;
 import motion.easing.Quart;
 import motion.easing.Quint;
 import motion.easing.Sine;
+import openfl.filters.DropShadowFilter;
 
 /**
  * ...
@@ -52,8 +53,8 @@ class ActuateTransition extends Transition
 				var alpha = Reflect.hasField(properties, "alpha") ? properties.alpha : null;
 				tween = Actuate.transform(target, duration).color(ParserUtils.parseColor(properties.color), str, alpha);
 			case EFFECTS:
-				trace('${properties.filter} not implemented yet');
-				tween = Actuate.effects(target, duration).filter(null, properties);
+				var cl = Type.resolveClass(properties.effect);
+				tween = Actuate.effects(target, duration).filter(cl, properties);
 		}
 		
 		if (delay > 0)

@@ -7,6 +7,7 @@ import openfl.display.Bitmap;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.geom.Rectangle;
 
 /**
  * Progress bar
@@ -19,16 +20,22 @@ class ProgressBar extends Sprite
 	/**
 	 * Background
 	 */
-	var _img:Bitmap;
+	var _bg:Bitmap;
 	/**
 	 * Resisable image 
 	 */
-	var _cache:Bitmap;
+	var _bar:Bitmap;
 	/**
 	 * Foreground image
 	 */
-	var _cover:Bitmap;
+	var _fg:Bitmap;
+	
+	var _mask:Rectangle;
+	
+	
 	var _width:Int;
+	
+	
 	
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float, basePath:String) 
 	{
@@ -38,27 +45,29 @@ class ProgressBar extends Sprite
 		var pb_def:Fast = Data.has.def ? GUI._getDef(Data.att.def) : null;
 		
 		
-		_img = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.img ? pb_def.att.img : Data.att.img)), PixelSnapping.ALWAYS, true);
-		_cache = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.cache ? pb_def.att.cache : Data.att.cache)), PixelSnapping.ALWAYS, true);
+		_bg = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.bg ? pb_def.att.bg : Data.att.bg)), PixelSnapping.ALWAYS, true);
+		_bar = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.bar ? pb_def.att.bar : Data.att.bar)), PixelSnapping.ALWAYS, true);
 		if( (pb_def != null && pb_def.has.cover) || Data.has.cover)
-			_cover = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.cover ? pb_def.att.cover : Data.att.cover)), PixelSnapping.ALWAYS, true);
+			_fg = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.fg ? pb_def.att.fg : Data.att.fg)), PixelSnapping.ALWAYS, true);
 		
 		_width = pb_def != null && pb_def.has.width ? Std.parseInt(pb_def.att.width) : Std.parseInt(Data.att.width);
 		
-		addChild(_img);
-		addChild(_cache);
+		addChild(_bg);
+		addChild(_bar);
 		
-		if (_cover != null)
+		_mask = new Rectangle(0, 0, 0, _bar.height);
+		
+		if (_fg != null)
 		{
-			addChild(_cover);
+			addChild(_fg);
 		
-			if (_cover.height > _img.height)
+			if (_fg.height > _bg.height)
 			{
-				_cover.y = Math.round((_img.height - _cover.height) * 0.5);
+				_fg.y = Math.round((_bg.height - _fg.height) * 0.5);
 			}
-			if (_cover.width > _img.width)
+			if (_fg.width > _bg.width)
 			{
-				_cover.x = Math.round((_img.width - _cover.width) * 0.5);
+				_fg.x = Math.round((_bg.width - _fg.width) * 0.5);
 			}
 		}
 		
@@ -75,9 +84,10 @@ class ProgressBar extends Sprite
 	
 	public function setProgress(f:Float):Void
 	{
-		_img.scaleX = f * 0.01;
-		_cache.x = _img.width - (_img.width * _cache.scaleX);
-		//Actuate.tween(_img, 0.4, {scaleX: f * 0.01});
-		//Actuate.tween(_cache, 0.4, {x: _img.width - (_img.width * _cache.scaleX)});
+		_mask.x = _bar.width - _bar.width * f;
+		_mask.width = _bar.width * f;
+		_bar.scrollRect = _mask;
+		/*Actuate.tween(_mask, 2.3, {x: _bar.width - _bar.width * f, width: _bar.width * f})
+		.onUpdate(function (){ _bar.scrollRect = _mask; });*/
 	}
 }
