@@ -54,6 +54,12 @@ class ParserUtils
 		return value.indexOf("%") != -1;
 	}
 	
+	public static function getColorFromString(str:String):Int
+	{
+		var colorDef = GUI._getDef(str);
+		return colorDef  != null ? parseColor(colorDef.att.value) : parseColor(str);
+	}
+	
 	public static function getColor(Data:Fast, attribute:String = "color", ?DefaultData:Fast):Int
 	{
 		var colorDef = null;

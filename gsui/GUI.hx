@@ -448,6 +448,16 @@ class GUI extends Sprite
 		#else
 		image = new Bitmap(Assets.getBitmapData(_basePath + el.att.name, true), PixelSnapping.AUTO, true);
 		#end
+		
+		if (el.has.width)
+		{
+			image.width = Std.parseInt(el.att.width);
+		}
+		if (el.has.height)
+		{
+			image.height = Std.parseInt(el.att.height);
+		}
+		
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
 	/**

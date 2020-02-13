@@ -38,7 +38,7 @@ class Base extends Sprite implements IDestroyable
 	public var useParentHeight:Bool;
 	public var parentHeight:Float;
 	
-	public var onResize:Event<Int->Int->Void>;
+	public var onResize:Event<Void->Void>;
 	
 	public var hasBottom:Bool;
 	public var hasRight:Bool;
@@ -54,11 +54,13 @@ class Base extends Sprite implements IDestroyable
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
 		
-		onResize = new Event<Int->Int->Void>();
+		onResize = new Event<Void->Void>();
 		
 		this.addEventListener(OpenEvent.ADDED_TO_STAGE, onAdded);
 		
 		parse(xml);
+		
+		preInit();
 		
 		init();
 		
@@ -100,9 +102,9 @@ class Base extends Sprite implements IDestroyable
 		}
 	}
 	
-	function onParentResize(parentWidth:Int, parentHeight:Int):Void{
-		this.parentWidth = parentWidth;
-		this.parentHeight = parentHeight;
+	function onParentResize():Void{
+		this.parentWidth = this.parent.width;
+		this.parentHeight = this.parent.height;
 		
 		init();
 	}
@@ -227,6 +229,11 @@ class Base extends Sprite implements IDestroyable
 		xml = null;
 	}
 	
+	public function preInit():Void
+	{
+		
+	}
+	
 	public function init():Void
 	{
 		
@@ -279,5 +286,18 @@ class Base extends Sprite implements IDestroyable
 		_mask = null;
 		if (onResize != null)
 			onResize.removeAll();
+	}
+	
+	inline public function dispatchResize():Void
+	{
+		onResize.dispatch();
+		//if(this.parent != null)
+			//this.parent.invalidate();
+	}
+	
+	override public function invalidate():Void 
+	{
+		init();
+		super.invalidate();
 	}
 }

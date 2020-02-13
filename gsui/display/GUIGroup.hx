@@ -26,14 +26,22 @@ class GUIGroup extends Base
 #end
 {
 	var _layout:ELayout;//default absolute
-	var _gap:Float;
+	var _gap:Float;//use width/height set in xml or parent
+	var _isAuto:Bool;//auto layout after creating nodes
 	
 	public var isBackground:Bool = false;
 	#if debug
 	var _debug:Bool = false;
 	#end
-		
+	
+	/**
+	 * All nodes in the order of the xml (this is the order used to keep the layout from the xml)
+	 */
 	var _nodes:Array<GUINode>;
+	/**
+	 * All nodes in the order of zindex if any
+	 */
+	var _nodesIndexed:Array<Int>;
 	
 	var _currentState:String = "";
 	
@@ -49,10 +57,10 @@ class GUIGroup extends Base
 		{
 			if(!node.isDefaultState()){
 				if (node.element != null && node.element.parent != null) {
-					if (node.data.has.onOut)
+					if (node.onOut != "")
 					{
 						var i = 0;
-						for (onOut in node.data.att.onOut.split(","))
+						for (onOut in node.onOut.split(","))
 						{
 							GUI.getTransition(onOut).start(node.element, i == 0 ? function() {node.element.parent.removeChild(node.element); } : null);
 							i++;
@@ -66,16 +74,18 @@ class GUIGroup extends Base
 		}
 		
 		//add default (state == '') and current state
-		for (node in _nodes)
+		var node;
+		for (i in 0..._nodesIndexed.length)
 		{
+			node = _nodes[_nodesIndexed[i]];
 			if (node.hasState(value) || node.isDefaultState())
 			{
 				if (node.element != null) {
 						addChild(node.element);
 						
-						if (node.data.has.onIn)
+						if (node.onIn != "")
 						{
-							for (onIn in node.data.att.onIn.split(","))
+							for (onIn in node.onIn.split(","))
 							{
 								GUI.getTransition(onIn).start(node.element);
 							}
@@ -115,8 +125,18 @@ class GUIGroup extends Base
 			this.mouseEnabled = this.mouseChildren = false;
 			
 		_gap = xml.has.gap ? Std.parseFloat(xml.att.gap) : 0;
+		_isAuto = xml.has.auto && xml.att.auto == "true";
 		
 		_nodes = GUI._parseXML(xml, initWidth, initHeight);
+		
+		_nodesIndexed = [for (i in 0..._nodes.length) i];
+		_nodesIndexed.sort(function(a:Int, b:Int) {
+			if (_nodes[a].zindex < _nodes[b].zindex)
+				return -1
+			else if (_nodes[a].zindex > _nodes[b].zindex)
+				return 1;
+			return 0;
+		});
 		
 		switch(xml.name)
 		{
@@ -127,9 +147,13 @@ class GUIGroup extends Base
 		}
 	}
 	
-	override public function init():Void 
+	override public function preInit():Void 
 	{
 		state = "";
+	}
+	
+	override public function init():Void 
+	{
 		
 		if (_layout != null)
 		{
@@ -150,7 +174,7 @@ class GUIGroup extends Base
 						}
 						else
 							node.element.x = pWH;
-						pWH += node.element.width > 0 ? node.element.width + _gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + _gap;
+						pWH += node.element.width > 0 ? node.element.width + _gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + _gap;
 					case VERTICAL:
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setY(pWH);
@@ -162,8 +186,7 @@ class GUIGroup extends Base
 						}
 						else
 							node.element.y = pWH;
-						trace(this.name, pWH, node.element.name, node.element.height);
-						pWH += node.element.height > 0 ? node.element.height + _gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + _gap;
+						pWH += node.element.height > 0 ? node.element.height + _gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + _gap;
 						
 				}
 				
@@ -177,6 +200,7 @@ class GUIGroup extends Base
 				case VERTICAL:
 					initHeight = height;
 			}
+			dispatchResize();
 			
 		}
 		//update this x and y
@@ -185,15 +209,10 @@ class GUIGroup extends Base
 		super.init();
 	}
 	
-	override public function invalidate():Void 
-	{
-		init();
-		super.invalidate();
-	}
-	
 	function onChildResize(e:Event):Void
 	{
 		var pWH:Float = 0;
+		
 		for (node in _nodes)
 		{
 			
@@ -204,13 +223,13 @@ class GUIGroup extends Base
 						cast(node.element, IPositionUpdatable).setX(pWH);
 					else
 						node.element.x = pWH;
-					pWH += node.element.width > 0 ? node.element.width + _gap : (node.data.has.width ? Std.parseFloat(node.data.att.width) : 0) + _gap;
+					pWH += node.element.width > 0 ? node.element.width + _gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + _gap;
 				case VERTICAL:
 					if (Std.is(node.element, IPositionUpdatable))
 						cast(node.element, IPositionUpdatable).setY(pWH);
 					else
 						node.element.y = pWH;
-					pWH += node.element.height > 0 ? node.element.height + _gap : (node.data.has.height ? Std.parseFloat(node.data.att.height) : 0) + _gap;
+					pWH += node.element.height > 0 ? node.element.height + _gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + _gap;
 					
 			}
 			

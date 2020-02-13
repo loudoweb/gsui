@@ -78,10 +78,10 @@ class Button extends GenericButton
 			{
 				if(!node.isDefaultState() && !node.hasState(_customStates)){
 					if (node.element != null && node.element.parent != null) {
-						if (node.data.has.onOut)
+						if (node.onOut != "")
 						{
 							var i = 0;
-							for (onOut in node.data.att.onOut.split(","))
+							for (onOut in node.onOut.split(","))
 							{
 								GUI.getTransition(onOut).start(node.element, i == 0 ? function() {node.element.parent.removeChild(node.element); } : null);
 								i++;
@@ -103,34 +103,34 @@ class Button extends GenericButton
 				if (node.element != null) {
 						addChild(node.element);
 						
-						if (node.data.has.onIn)
+						if (node.onIn != "")
 						{
-							for (onIn in node.data.att.onIn.split(","))
+							for (onIn in node.onIn.split(","))
 							{
 								GUI.getTransition(onIn).start(node.element);
 							}
 						}
 						
-						if (value == "hover" && node.data.has.onHover )
+						if (value == "hover" && node.onHover != "" )
 						{
-							for (onHover in node.data.att.onHover.split(","))
+							for (onHover in node.onHover.split(","))
 							{
 								GUI.getTransition(onHover).start(node.element);
 							}
-						}else if (_currentState == "hover" && value == "up" && node.data.has.onUp)
+						}else if (_currentState == "hover" && value == "up" && node.onUp != "")
 						{
-							for (onUp in node.data.att.onUp.split(","))
+							for (onUp in node.onUp.split(","))
 							{
 								GUI.getTransition(onUp).start(node.element);
 							}
 						}
 						
-						if (Std.is(node.element, GUITextField) && node.data.has.hoverColor)//hack for text
+						if (Std.is(node.element, GUITextField) && node.hoverColor != "")//hack for text
 						{
 							if (value == "hover") {
-								cast(node.element, GUITextField).textColor = ParserUtils.getColor(node.data, "hoverColor");
+								cast(node.element, GUITextField).textColor = ParserUtils.getColorFromString(node.hoverColor);
 							}else {
-								cast(node.element, GUITextField).textColor = ParserUtils.getColor(node.data);
+								cast(node.element, GUITextField).textColor = ParserUtils.getColorFromString(node.color);
 							}
 						}
 				}
