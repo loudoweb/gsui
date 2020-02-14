@@ -298,6 +298,9 @@ class Base extends Sprite implements IDestroyable
 		{
 			var _parent:Base = cast this.parent;
 			_parent.setDirty();
+		}else if (Std.is(this.parent, GUI))
+		{
+			//GUI.onSizeChanged.dispatch(GUI.instance.width, GUI.instance.height);
 		}
 		init();
 		//updatePosition();//TODO merge with Base.init()

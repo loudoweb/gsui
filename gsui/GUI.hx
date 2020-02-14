@@ -23,6 +23,7 @@ import gsui.utils.ParserUtils;
 import gsui.utils.ReplaceUtils;
 import haxe.ds.StringMap;
 import haxe.xml.Fast;
+import lime.app.Event;
 import motion.Actuate;
 import openfl.Assets;
 import openfl.display.Bitmap;
@@ -88,15 +89,15 @@ typedef Tongue =
 }
 class GUI extends Sprite
 {
-	
-	/**
-	 * default : STATIC ; DYNAMIC means that all containers can resize when children change size or positions. You can control at a component basis using dynamic="true".
-	 */
-	public static var ISDYNAMIC:Bool = false;
 	/**
 	 * width beyond it doesn't scale, default: always scale
 	 */
-	public static var EFFECTIVE_AREA:Int = 4000;
+	static public var EFFECTIVE_AREA:Int = 4000;
+	static public var GUI_WIDTH(default, null):Float;
+	static public var GUI_HEIGHT(default, null):Float;
+	static public var TONGUE:Tongue;
+	static public var instance(default, null):GUI;
+	static public var onSizeChanged:Event<Float->Float->Void> = new Event<Float->Float->Void>();
 	
 	/**
 	 * top group currently on display list
@@ -123,7 +124,7 @@ class GUI extends Sprite
 	static var _transition:StringMap<Transition>;
 
 	
-	public static var instance(default, null):GUI;
+	
 	static var _basePath:String;
 	static var _interfaceFast:Fast;
 	static var _confFast:Fast;
@@ -133,10 +134,6 @@ class GUI extends Sprite
 	
 	static var _cursor:ICustomCursor;
 	static var _transitionFactory:ITransitionFactory;
-	
-	static public var GUI_WIDTH(default, null):Float;
-	static public var GUI_HEIGHT(default, null):Float;
-	static public var TONGUE:Tongue;
 
 	/**
 	 * 
@@ -243,6 +240,9 @@ class GUI extends Sprite
 		{
 			_desaturate(null);
 		}
+		
+		onSizeChanged.dispatch(instance.width, instance.height);
+		
 		//create dynamic class to handle elements by custom code 
 		//TODO generate by macro
 		/*if(el.has.classes){
@@ -290,6 +290,9 @@ class GUI extends Sprite
 		{
 			_saturate(Std.string(el.att.saturate).split(","));
 		}
+		
+		onSizeChanged.dispatch(instance.width, instance.height);
+		
 		//create dynamic class to handle elements by custom code
 		/*
 		if(el.has.classes){
@@ -333,6 +336,9 @@ class GUI extends Sprite
 		{
 			_desaturate(Std.string(el.att.saturate).split(","));
 		}
+		
+		onSizeChanged.dispatch(instance.width, instance.height);
+		
 		//handle state game with IStateManager
 		if (_gameState != null)
 		{

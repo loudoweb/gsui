@@ -1,6 +1,7 @@
 package gsui.display;
 
 import gsui.utils.DestroyUtils;
+import haxe.xml.Fast;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
@@ -13,7 +14,7 @@ import openfl.geom.Rectangle;
  * @author Lars Doucet
  * @author loudo
  */
-class Sprite9Grid extends Sprite
+class Sprite9Grid extends Base
 {
 	private var _bmpCanvas:BitmapData; //drives the 9-slice drawing
 	
@@ -56,10 +57,21 @@ class Sprite9Grid extends Sprite
 	 */
 	public function new(Graphic:BitmapData, Width:Int, Height:Int) 
 	{
-		super();
 		_raw_pixels = Graphic;
-		resize(Width, Height);
+		initWidth = Width;
+		initHeight = Height;
+		super(null, Width, Height);
 		mouseEnabled = false;
+	}
+	
+	override function parse(xml:Fast):Void 
+	{
+		
+	}
+	
+	override public function init():Void 
+	{
+		resize(Std.int(initWidth), Std.int(initHeight));
 	}
 	
 	public function resize(w:Int, h:Int):Void {
