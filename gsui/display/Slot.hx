@@ -43,6 +43,7 @@ class Slot extends Base
 		{
 			//TODO Bitmap OR Atlas
 			addChild(imageResize(new Bitmap(Assets.getBitmapData(name), PixelSnapping.AUTO, true)));
+			setDirty();
 		}else if (Assets.exists(name)){
 			//TODO signal download
 			Assets.loadBitmapData(name).onComplete(onMediaComplete);
@@ -54,6 +55,7 @@ class Slot extends Base
 	{
 		var group = GUI._parseGroup(GUI.getFast(name), initWidth, initHeight);
 		addChild(group);
+		setDirty();
 		return cast group;
 	}
 	
@@ -67,6 +69,7 @@ class Slot extends Base
 	{
 		//TODO signal download ended
 		addChild(imageResize(new Bitmap(bm, PixelSnapping.AUTO, true)));
+		setDirty();
 	}
 	
 	function imageResize(image:Bitmap):Bitmap

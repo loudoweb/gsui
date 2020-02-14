@@ -6,6 +6,7 @@ import haxe.xml.Fast;
 import lime.app.Event;
 import openfl.events.Event in OpenEvent;
 import openfl.display.Sprite;
+import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 
 using gsui.utils.AlignUtils;
@@ -46,6 +47,11 @@ class Base extends Sprite implements IDestroyable
 	public var hasFlipY:Bool;
 	
 	public var _mask:Rectangle;
+	
+	#if debug
+	var _debug:Bool = false;
+	var _colorDebug:Int = 0x0000FF;
+	#end
 	
 	public function new(xml:Fast, parentWidth:Float, parentHeight:Float) 
 	{
@@ -100,13 +106,6 @@ class Base extends Sprite implements IDestroyable
 					p.onResize.remove(onParentResize);
 			}
 		}
-	}
-	
-	function onParentResize():Void{
-		this.parentWidth = this.parent.width;
-		this.parentHeight = this.parent.height;
-		
-		init();
 	}
 	
 	function parse(xml:Fast):Void
@@ -288,16 +287,69 @@ class Base extends Sprite implements IDestroyable
 			onResize.removeAll();
 	}
 	
-	inline public function dispatchResize():Void
+	/**
+	 * Mostly call when width or heigth has been changed
+	 * And then call the parent
+	 */
+	public function setDirty():Void
+	{
+		
+		if (Std.is(this.parent, Base))
+		{
+			var _parent:Base = cast this.parent;
+			_parent.setDirty();
+		}
+		init();
+		//updatePosition();//TODO merge with Base.init()
+	}
+	
+	/**
+	 * Parent resize can modify this component
+	 */
+	function onParentResize():Void{
+		this.parentWidth = this.parent.width;
+		this.parentHeight = this.parent.height;
+		
+		init();
+	}
+	
+	/**
+	 * Shortcut to dispatch a width or height changed
+	 */
+	public function dispatchResize():Void
 	{
 		onResize.dispatch();
 		//if(this.parent != null)
 			//this.parent.invalidate();
 	}
 	
-	override public function invalidate():Void 
+	//{ DEBUG
+	
+	public function drawDebug(?color:Int):Void
 	{
-		init();
-		super.invalidate();
+		#if debug
+	
+			if (!_debug)
+			{
+				trace(name, initX, initY, initWidth, initHeight, parentWidth, parentHeight, pivotX, pivotY, x, y, this.parent.x, this.parent.y);
+				this.graphics.beginFill(color != null ? color : _colorDebug, 0.10);
+				this.graphics.drawRect(0, 0, initWidth, initHeight);
+				this.graphics.endFill();
+				this.addEventListener(MouseEvent.ROLL_OVER, onOverDebug);
+				_debug = true;
+			}else {
+				this.graphics.clear();
+				this.removeEventListener(MouseEvent.ROLL_OVER, onOverDebug);
+				_debug = false;
+			}
+		
+		#end
 	}
+	#if debug
+	function onOverDebug(e:MouseEvent):Void
+	{
+		trace('over $name');
+	}
+	#end
+	//}
 }

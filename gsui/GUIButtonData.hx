@@ -1,5 +1,5 @@
 package gsui;
-import gsui.display.Button.EButtonehavior;
+import gsui.display.Button.EButtonBehavior;
 import gsui.display.GenericButton;
 
 /**
@@ -14,9 +14,9 @@ class GUIButtonData
 	public var onHover:String;
 	public var clickHandler:GenericButton->String->String->Void;
 	public var click:String;
-	public var behaviour:EButtonehavior;
+	public var behaviour:EButtonBehavior;
 	
-	public function new(images:Array<GUIDataCouple>, texts:Array<GUIDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void, ?behaviour:EButtonehavior ) 
+	public function new(images:Array<GUIDataCouple>, texts:Array<GUIDataCouple>, state:String, onHover:String, click:String, ?clickHandler:GenericButton->String->String->Void, ?behaviour:EButtonBehavior ) 
 	{
 		this.images = images;
 		this.texts = texts;

@@ -80,6 +80,7 @@ enum EGUIType {
 	PROGRESSBAR;
 	RECT;
 	CIRCLE;
+	SWF;
 }
 typedef Tongue =
 {
@@ -411,6 +412,8 @@ class GUI extends Sprite
 					display = _parseProgress(el, ContainerW, ContainerH);
 				case RECT, CIRCLE:
 					display = _parseShape(el, ContainerW, ContainerH);
+				case SWF:
+					display = _parseSWF(el, ContainerW, ContainerH);
 			}
 			
 			if (display != null) {
@@ -620,6 +623,14 @@ class GUI extends Sprite
 		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
 	}
 	
+	public static function _parseSWF(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	{
+		var display = Assets.getMovieClip(fast.att.name);
+		display.name = fast.has.id ? fast.att.id : fast.att.name;
+		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
+	}
+	
+	
 	/**
 	 * Helper to positionate elements
 	 * @param	el
@@ -661,7 +672,7 @@ class GUI extends Sprite
 			
 		if (el.has.effect && el.att.effect != "")
 			_effect(display, Type.createEnum(EGUIEffect, el.att.effect.toUpperCase()));
-			
+		trace(display.name, display.x, display.y, display.width, display.height);
 		return display;
 	}
 	

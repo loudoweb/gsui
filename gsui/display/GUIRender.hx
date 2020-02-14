@@ -6,17 +6,15 @@ import openfl.geom.Rectangle;
 
 /**
  * ...render many buttons automatically.
+ * //TODO should not need alreayd set nodes to addData
  * @usage call setData(), addData(), removeData() to update
  * @author loudo
  */
-class GUIRender extends Sprite
+class GUIRender extends Base
 {
 	public var isBackground:Bool = false;
 	
 	public var nodes(default, null):Array<Button>;
-	
-	var _width:Float;
-	var _height:Float;
 	
 	/**
 	 * layout v (vertical), h (horizontal), p (already placed), or column,row
@@ -30,31 +28,35 @@ class GUIRender extends Sprite
 	
 	var _containerW:Float;
 	var _containerH:Float;
+	var itemRenderer:Fast;
+	var gapW:Int;
+	var gapH:Int;
 	
 	public var maxItem:Int;
 	public var items(default, null):Int;
+	public var row:Int;
+	public var column:Int;
 
 
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
-		super();
+		super(Data, ContainerW, ContainerH);
+	}
+	
+	override function parse(xml:Fast):Void 
+	{
+		super.parse(xml);
 		
-		_width = ParserUtils.getWidth(Data, ContainerW);
-		_height = ParserUtils.getHeight(Data, ContainerH);
-		isBackground = Data.has.background && Data.att.background == "true";
-		centerContent = Data.has.x && Data.att.x == "center";//TODO center y
-		_containerW = ContainerW;
-		_containerH = ContainerH;
+		isBackground = xml.has.background && xml.att.background == "true";
+		centerContent = xml.has.x && xml.att.x == "center";//TODO center y
 		
-		name = Data.att.id;
+		maxItem = Std.parseInt(xml.att.num);
 		
-		maxItem = Std.parseInt(Data.att.num);
+		itemRenderer = xml.elements.next();
 		
-		var itemRenderer:Fast = Data.elements.next();
-		
-		var gap:Int = Data.has.gap ? Std.parseInt(Data.att.gap) : 0;
-		var gapW:Int = gap;
-		var gapH:Int = gap;
+		_gap = xml.has.gap ? Std.parseInt(xml.att.gap) : 0;
+		gapW = _gap;
+		gapH = _gap;
 		var scale:Float = itemRenderer.has.scale ? Std.parseFloat(itemRenderer.att.scale) : 1;
 		if (itemRenderer.has.width) {
 			gapW += Std.int(Std.parseInt(itemRenderer.att.width) * scale);
@@ -62,11 +64,13 @@ class GUIRender extends Sprite
 		if (itemRenderer.has.height) {
 			gapH += Std.int(Std.parseInt(itemRenderer.att.height) * scale);
 		}
-		var row:Int = 1;
-		var column:Int = 1;
-		if (Data.has.layout)
+		
+		row = 1;
+		column = 1;
+		
+		if (xml.has.layout)
 		{
-			_layout = Data.att.layout;
+			_layout = xml.att.layout;
 			if (_layout == "h") {
 				column = maxItem;
 				_gap = gapW;
@@ -86,12 +90,15 @@ class GUIRender extends Sprite
 		}
 		
 		nodes = [];
-		if (row == -1) {//already placed
-			for (el in Data.elements)
+		
+		//parse already placed elements
+		if (row == -1) {
+			for (el in xml.elements)
 			{
-				nodes.push(cast(GUI._parseButton(el, _width, _height), Button));
+				nodes.push(cast(GUI._parseButton(el, initWidth, initHeight), Button));
 			}
-		}else {//need to be placed
+		}else{
+			//create buttons from item renderer
 			var button:Button;
 			var buttonX:Float = 0;
 			var buttonY:Float = 0;
@@ -102,7 +109,7 @@ class GUIRender extends Sprite
 				for (k in 0...column)
 				{
 					buttonX = k * gapW;
-					button = cast GUI._parseButton(itemRenderer, _width, _height);
+					button = cast GUI._parseButton(itemRenderer, initWidth, initHeight);
 					button.setX(buttonX);
 					button.setY(buttonY);
 					if(itemRenderer.has.id)
@@ -113,16 +120,37 @@ class GUIRender extends Sprite
 				}
 			}
 		}
-		
-		GUI._placeDisplay(Data, this, ContainerW, ContainerH, _width, _height);
-		
 	}
+	
+	override public function init():Void 
+	{
+		//move only item renderer and not already placed nodes
+		/*if (row > -1)
+		{
+			var i = 0;
+			var buttonX:Float = 0;
+			var buttonY:Float = 0;
+			for (node in nodes)
+			{
+				buttonX = (i % column) * gapW;
+				buttonY = (i % row) * gapH;
+				node.setX(buttonX);
+				node.setY(buttonY);
+				i++;
+			}
+		}*/
+		
+		super.init();
+		
+		updatePosition();
+	}
+	
 	public function updatePosition():Void
 	{
-		if (centerContent)
+		/*if (centerContent)
 		{
 			x = (_containerW  - width) * 0.5;
-		}
+		}*/
 		/*if (height > _height && this.scrollRect == null)
 		{
 			this.scrollRect = new Rectangle(0, 0, _width, _height);
@@ -219,14 +247,7 @@ class GUIRender extends Sprite
 		
 		setDirty();
 	}
-	public function setDirty():Void
-	{
-		if (this.parent != null)
-		{
-			this.parent.invalidate();
-		}
-		updatePosition();//TODO merge with Base.init()
-	}
+	
 	public function getButtonIndex(button:Button):Int
 	{
 		var i:Int = 0;

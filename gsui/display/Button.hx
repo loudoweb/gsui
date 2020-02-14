@@ -11,7 +11,7 @@ import openfl.display.DisplayObject;
 import gsui.interfaces.IDebuggable;
 #end
 
-enum EButtonehavior{
+enum EButtonBehavior{
 	NONE;
 	RADIO;
 	CHECKBOX;
@@ -28,7 +28,7 @@ class Button extends GenericButton implements IDebuggable
 class Button extends GenericButton
 #end
 {
-	public var behaviour:EButtonehavior;
+	public var behaviour:EButtonBehavior;
 	public var onIn:String;
 	public var onOut:String;
 	//TODO onClickRequested
@@ -171,7 +171,7 @@ class Button extends GenericButton
 			_height = Std.parseFloat(XMLUtils.getFirstChild(Data).att.height);
 		}
 		
-		behaviour = Data.has.behaviour ? Type.createEnum(EButtonehavior, Data.att.behaviour.toUpperCase()) : NONE;
+		behaviour = Data.has.behaviour ? Type.createEnum(EButtonBehavior, Data.att.behaviour.toUpperCase()) : NONE;
 				
 		if (Data.has.scale)
 			scaleX = scaleY = Std.parseFloat(Std.string(Data.att.scale));
@@ -332,6 +332,11 @@ class Button extends GenericButton
 	{
 		_customStates = states;
 		handleState(genericState != null ? genericState : state);
+	}
+	
+	public function getCustomStates():String
+	{
+		return _customStates;
 	}
 	
 	@:generic public function getChildOf<T:DisplayObject>(name:String, type:Class<T>):T

@@ -19,20 +19,14 @@ enum ELayout
  * Group is a layer that can contain many elements and handle different custom states to update its content
  * @author loudo
  */
-#if debug
-class GUIGroup extends Base implements IDebuggable
-#else
+
 class GUIGroup extends Base
-#end
 {
 	var _layout:ELayout;//default absolute
 	var _gap:Float;//use width/height set in xml or parent
 	var _isAuto:Bool;//auto layout after creating nodes
 	
 	public var isBackground:Bool = false;
-	#if debug
-	var _debug:Bool = false;
-	#end
 	
 	/**
 	 * All nodes in the order of the xml (this is the order used to keep the layout from the xml)
@@ -93,6 +87,8 @@ class GUIGroup extends Base
 				}
 			}
 		}
+		setDirty();
+		//dispatchResize();
 		return _currentState;
 	} 
 	
@@ -128,6 +124,7 @@ class GUIGroup extends Base
 		_isAuto = xml.has.auto && xml.att.auto == "true";
 		
 		_nodes = GUI._parseXML(xml, initWidth, initHeight);
+		
 		
 		_nodesIndexed = [for (i in 0..._nodes.length) i];
 		_nodesIndexed.sort(function(a:Int, b:Int) {
@@ -200,6 +197,7 @@ class GUIGroup extends Base
 				case VERTICAL:
 					initHeight = height;
 			}
+			//setDirty();
 			dispatchResize();
 			
 		}
@@ -207,46 +205,6 @@ class GUIGroup extends Base
 		//GUI._placeDisplay(Data, this, ContainerW, ContainerH, initWidth, initHeight);
 		
 		super.init();
-	}
-	
-	function onChildResize(e:Event):Void
-	{
-		var pWH:Float = 0;
-		
-		for (node in _nodes)
-		{
-			
-			switch(_layout)
-			{
-				case HORIZONTAL:
-					if (Std.is(node.element, IPositionUpdatable))
-						cast(node.element, IPositionUpdatable).setX(pWH);
-					else
-						node.element.x = pWH;
-					pWH += node.element.width > 0 ? node.element.width + _gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + _gap;
-				case VERTICAL:
-					if (Std.is(node.element, IPositionUpdatable))
-						cast(node.element, IPositionUpdatable).setY(pWH);
-					else
-						node.element.y = pWH;
-					pWH += node.element.height > 0 ? node.element.height + _gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + _gap;
-					
-			}
-			
-		}
-		//only if width and height not specified in xml
-		//update width or height after layouting to permit good x and y placement for this
-		switch(_layout)
-		{
-			case HORIZONTAL:
-				initWidth = width;
-			case VERTICAL:
-				initHeight = height;
-		}
-		
-		//update this x and y
-		//TODO use AlignUtils instead of ...
-		//GUI._placeDisplay(Data, this, ContainerW, ContainerH, initWidth, initHeight);
 	}
 	
 	public function removeFromParent():Void
@@ -370,39 +328,17 @@ class GUIGroup extends Base
 		}
 		return arr;
 	}
-	#if debug
-	public function drawDebug():Void
+	
+		/**
+	 * Called by child width/height changed
+	 */
+	override public function invalidate():Void 
 	{
-		if (!_debug)
+		if (_layout != null)
 		{
-			trace('drawDebug');
-			this.graphics.beginFill(0x0000ff, 0.10);
-			this.graphics.drawRect(0, 0, width, height);
-			this.graphics.endFill();
-			this.addEventListener(MouseEvent.ROLL_OVER, onOverDebug);
-			//no recursive for GuiGroup since all groups are stored in GUI for now
-			for (node in _nodes)
-			{
-				if(Std.is(node.element, IDebuggable)){
-					cast(node.element, IDebuggable).drawDebug();
-				}
-			}
-			_debug = true;
-		}else {
-			this.graphics.clear();
-			this.removeEventListener(MouseEvent.ROLL_OVER, onOverDebug);
-			for (node in _nodes)
-			{
-				if(Std.is(node.element, IDebuggable)){
-					cast(node.element, IDebuggable).drawDebug();
-				}
-			}
-			_debug = false;
+			init();
+			
+			super.invalidate();
 		}
 	}
-	function onOverDebug(e:MouseEvent):Void
-	{
-		trace('over $name');
-	}
-	#end
 }
