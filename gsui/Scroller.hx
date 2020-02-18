@@ -104,8 +104,6 @@ class Scroller {
 	
 	static function computeNeedScroll():Void
 	{
-		if (hasScrolling)
-			return;
 			
 		if (_targetHeight * _parentRatio > _parentHeight + 1)//TODO use pixelbounds instead of simple height to not have masked height (when fixed in openfl)
 		{
@@ -121,10 +119,9 @@ class Scroller {
 	static function addListeners(createScrollRect:Bool = true):Void
 	{
 		if(createScrollRect){
-			//target.scrollRect = new Rectangle( -Helper.POS.x / Helper.RATIO, 0, Helper.WIDTH / Helper.RATIO, Helper.ORIGIN_HEIGHT);
-			//target.x = -Helper.POS.x / Helper.RATIO;
-			target.scrollRect = new Rectangle( 0, 0, _parentWidth / _parentRatio, _parentHeight / _parentRatio);
-			//target.x = -Helper.POS.x / Helper.RATIO;
+
+			target.scrollRect = new Rectangle( -_posX / _parentRatio, 0, _parentWidth / _parentRatio, _parentHeight / _parentRatio);
+			target.x -= _posX;
 		}
 		STAGE.addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		STAGE.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
@@ -136,8 +133,10 @@ class Scroller {
 		if (STAGE.hasEventListener(MouseEvent.MOUSE_DOWN))
 			STAGE.removeEventListener(MouseEvent.MOUSE_DOWN, onDown);
 			
-		if(destroyScroll && target != null)
+		if(destroyScroll && target != null){
 			target.scrollRect = null;
+			target.x = _posX;
+		}
 		if (isScrolling)
 		{
 			STAGE.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
