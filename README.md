@@ -118,6 +118,8 @@ Must be in fonts folder and have lowercase extension in ttf only.
 - [ ] remove bindx2 dependency ?
 - [ ] add macros to include classes from xml
 - [ ] Render should also handle CheckBox and Radio
+- [ ] Textfield should inherits Base to allow repositioning if in boxB or boxV
+- [ ] forbids setting x in boxH and y in boxV
 
 # dependencies
 - actuate

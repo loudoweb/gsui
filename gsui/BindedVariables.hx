@@ -45,7 +45,6 @@ class BindedVariables
 	{
 		for (textfield in bindedTextFields)
 		{
-			trace(textfield.sourceText);
 			textfield.updateText(textfield.sourceText);
 		}
 	}

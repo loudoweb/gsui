@@ -334,7 +334,6 @@ class Base extends Sprite implements IDestroyable
 	
 			if (!_debug)
 			{
-				trace(name, initX, initY, initWidth, initHeight, parentWidth, parentHeight, pivotX, pivotY, x, y, this.parent.x, this.parent.y);
 				this.graphics.beginFill(color != null ? color : _colorDebug, 0.10);
 				this.graphics.drawRect(0, 0, initWidth, initHeight);
 				this.graphics.endFill();
