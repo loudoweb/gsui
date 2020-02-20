@@ -34,6 +34,8 @@ class Scroller {
 	
 	public static var hasScrolling(default, null):Bool;
 	
+	public static var onScroll:lime.app.Event<Float->Void> = new lime.app.Event<Float->Void>();
+	
 	static var hasInit:Bool;
 	
 	/**
@@ -109,11 +111,10 @@ class Scroller {
 			//SignalHandler.onScrollNewPos.add(modifyScrollPos);
 		}
 		
-		scrollbar = GUI._getGroup("scrollbar");
 		if (scrollbar != null)
 		{
-			scrollbar.visible = true;
 			scrollbar.parent.addChild(scrollbar);
+			_bar.y = 0;
 			
 		}
 		
@@ -161,6 +162,8 @@ class Scroller {
 		if (scrollbar != null)
 		{
 			scrollbar.visible = true;
+			scrollbar.parent.addChild(scrollbar);
+			_bar.y = 0;
 			_bar.addEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
 		}
 		
@@ -253,6 +256,8 @@ class Scroller {
 		
 		if (_bar != null)
 			_bar.y = Math.abs(rect.y / maxY()) * (scrollbar.height - _bar.height);
+			
+		onScroll.dispatch(rect.y);
 		
 	}
 	
@@ -301,6 +306,8 @@ class Scroller {
 		
 		if (_bar != null)
 			_bar.y = Math.abs(rect.y / maxY()) * (scrollbar.height - _bar.height);
+			
+		onScroll.dispatch(rect.y);
 	}
 	
 	static function onUpdate(e:Event):Void
@@ -318,6 +325,8 @@ class Scroller {
 		}
 		
 		target.scrollRect = rect;
+		
+		onScroll.dispatch(rect.y);
 		
 	}
 	
@@ -448,5 +457,12 @@ class Scroller {
 		checkBounds(rect);
 		setFixedElements(rect.y);
 		target.scrollRect = rect;
+		
+		onScroll.dispatch(rect.y);
+	}
+	
+	public static function getPosY():Float
+	{
+		return target.scrollRect.y;
 	}
 }
