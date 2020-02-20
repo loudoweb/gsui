@@ -1,8 +1,11 @@
 package gsui;
 
+import gsui.display.GUIGroup;
+import gsui.utils.GraphicsUtils;
 import motion.Actuate;
 import openfl.Lib;
 import openfl.display.DisplayObject;
+import openfl.display.Sprite;
 import openfl.display.Stage;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
@@ -57,8 +60,29 @@ class Scroller {
 	static var _posX:Float;
 	static var _posY:Float;
 	
+	public static var scrollbar(default, null):Sprite;
+	static var _bar:Sprite;
+	static var _barBounds:Rectangle;
+	
+	public static function createScrollbar(height:Int, posX:Int):Sprite
+	{
+		scrollbar = new Sprite();
+		_bar = new Sprite();
+		GraphicsUtils.drawRectFill(scrollbar.graphics, 10, height - 20, 0x786E64, 0.2);
+		GraphicsUtils.drawRectFill(_bar.graphics, 10, (height - 20) / 3, 0x786E64, 0.3);
+		scrollbar.addChild(_bar);
+		scrollbar.x = Lib.current.stage.stageWidth - scrollbar.width - 10 + posX;
+		scrollbar.y = 10;
+		_barBounds = new Rectangle(0, 0, 0, scrollbar.height - _bar.height);
+		_bar.buttonMode = true;
+		fixedElement = scrollbar;
+		fixedElementOriginY = scrollbar.y;
+		return scrollbar;
+	}
+	
 	public static function set_target(_target:DisplayObject):DisplayObject
 	{
+		
 		removeEnterFrame();
 		removeListeners(true);
 		
@@ -83,6 +107,14 @@ class Scroller {
 			//SignalHandler.onScrollNewSize.add(modifySizeForScroll);
 			//SignalHandler.onScrollGoBottom.add(onGoBackPage);
 			//SignalHandler.onScrollNewPos.add(modifyScrollPos);
+		}
+		
+		scrollbar = GUI._getGroup("scrollbar");
+		if (scrollbar != null)
+		{
+			scrollbar.visible = true;
+			scrollbar.parent.addChild(scrollbar);
+			
 		}
 		
 		return _target;
@@ -121,10 +153,17 @@ class Scroller {
 		if(createScrollRect){
 
 			target.scrollRect = new Rectangle( -_posX / _parentRatio, 0, _parentWidth / _parentRatio, _parentHeight / _parentRatio);
-			target.x -= _posX;
+			target.x = 0;
 		}
 		STAGE.addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		STAGE.addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+		
+		if (scrollbar != null)
+		{
+			scrollbar.visible = true;
+			_bar.addEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
+		}
+		
 	}
 	
 	static function removeListeners (destroyScroll:Bool = true):Void {
@@ -142,6 +181,12 @@ class Scroller {
 			STAGE.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
 			STAGE.removeEventListener(MouseEvent.MOUSE_UP, onUp);
 			isScrolling = false;
+		}
+		
+		if (scrollbar != null)
+		{
+			scrollbar.visible = false;
+			_bar.removeEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
 		}
 	}
 	
@@ -198,12 +243,16 @@ class Scroller {
 			rect.y += distWheel;			
 		}
 		
+		
 		//SignalHandler.onScrollBegin.dispatch();
 		
 		checkBounds(rect);
 		setFixedElements(rect.y);
 		
 		target.scrollRect = rect;
+		
+		if (_bar != null)
+			_bar.y = Math.abs(rect.y / maxY()) * (scrollbar.height - _bar.height);
 		
 	}
 	
@@ -243,10 +292,15 @@ class Scroller {
 		_previousTime = _time;
 		_time = Lib.getTimer();
 		
+		
+		
 		checkBounds(rect);
 		setFixedElements(rect.y);
 		
 		target.scrollRect = rect;
+		
+		if (_bar != null)
+			_bar.y = Math.abs(rect.y / maxY()) * (scrollbar.height - _bar.height);
 	}
 	
 	static function onUpdate(e:Event):Void
@@ -277,6 +331,10 @@ class Scroller {
 		_parentRatio = ratio;
 		_posX = posX;
 		_posY = posY;
+		
+		if (scrollbar != null)
+			scrollbar.x = Lib.current.stage.stageWidth - scrollbar.width - 10 + posX;
+		
 		computeNeedScroll();
 	}
 	/**
@@ -361,5 +419,34 @@ class Scroller {
 	{
 		target.removeEventListener(MouseEvent.CLICK, stopClick, true);
 		e.stopPropagation();
+	}
+	
+	static function onBarDown(e:MouseEvent):Void
+	{
+		e.stopImmediatePropagation();
+		
+		_bar.removeEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
+		STAGE.addEventListener(MouseEvent.MOUSE_UP, onBarUp);
+		STAGE.addEventListener(MouseEvent.MOUSE_MOVE, onBarMove);
+		_bar.startDrag(false, _barBounds);
+	}
+	
+	static function onBarUp(e:MouseEvent):Void
+	{
+		STAGE.removeEventListener(MouseEvent.MOUSE_UP, onBarUp);
+		STAGE.removeEventListener(MouseEvent.MOUSE_MOVE, onBarMove);
+		_bar.addEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
+		
+		_bar.stopDrag();
+	}
+	
+	static function onBarMove(e:MouseEvent):Void
+	{
+		var percent = _bar.y / (scrollbar.height - _bar.height);
+		var rect = target.scrollRect;
+		rect.y = percent * maxY();
+		checkBounds(rect);
+		setFixedElements(rect.y);
+		target.scrollRect = rect;
 	}
 }
