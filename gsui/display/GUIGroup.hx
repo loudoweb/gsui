@@ -23,7 +23,13 @@ enum ELayout
 class GUIGroup extends Base
 {
 	var _layout:ELayout;//default absolute
-	var _gap:Float;//use width/height set in xml or parent
+	/**
+	 * Distance between children.
+	 * Use width/height set in xml or parent.
+	 * Auto (value of -1) means that children will take all the width or height of the group.
+	 * @default 0
+	 */
+	var _gap:Float;//
 	var _isAuto:Bool;//auto layout after creating nodes
 	
 	public var isBackground:Bool = false;
@@ -120,7 +126,7 @@ class GUIGroup extends Base
 		if (xml.has.mouseEnabled && xml.att.mouseEnabled == "false")
 			this.mouseEnabled = this.mouseChildren = false;
 			
-		_gap = xml.has.gap ? Std.parseFloat(xml.att.gap) : 0;
+		_gap = xml.has.gap ? (xml.att.gap == "auto" ? -1 : Std.parseFloat(xml.att.gap)) : 0;
 		_isAuto = xml.has.auto && xml.att.auto == "true";
 		
 		_nodes = GUI._parseXML(xml, initWidth, initHeight);
@@ -157,6 +163,7 @@ class GUIGroup extends Base
 			//update nodes x and y
 			
 			var pWH:Float = 0;
+			var gap = _gap == -1 ? 0 : _gap;
 			for (node in _nodes)
 			{
 				
@@ -171,7 +178,7 @@ class GUIGroup extends Base
 						}
 						else
 							node.element.x = pWH;
-						pWH += node.element.width > 0 ? node.element.width + _gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + _gap;
+						pWH += node.element.width > 0 ? node.element.width + gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + gap;
 					case VERTICAL:
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setY(pWH);
@@ -183,10 +190,55 @@ class GUIGroup extends Base
 						}
 						else
 							node.element.y = pWH;
-						pWH += node.element.height > 0 ? node.element.height + _gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + _gap;
+						pWH += node.element.height > 0 ? node.element.height + gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + gap;
 						
 				}
 				
+			}
+			
+			//take all the place if auto gap
+			if (_gap == -1)
+			{
+				
+				pWH = 0;
+				
+				switch(_layout)
+				{
+					case HORIZONTAL:
+						
+						gap = (initWidth - width) / _nodes.length;
+						
+						for (node in _nodes)
+						{
+							if (Std.is(node.element, IPositionUpdatable))
+								cast(node.element, IPositionUpdatable).setX(pWH);
+							else if (Std.is(node.element, Base)){
+								cast(node.element, Base).initX = pWH;
+								cast(node.element, Base).init();
+							}
+							else
+								node.element.x = pWH;
+							pWH += node.element.width > 0 ? node.element.width + gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + gap;
+						}
+					case VERTICAL:
+						
+						gap = (initHeight - height) / _nodes.length;
+						
+						for (node in _nodes)
+						{
+							if (Std.is(node.element, IPositionUpdatable))
+								cast(node.element, IPositionUpdatable).setY(pWH);
+							else if (Std.is(node.element, Base))
+							{
+								
+								cast(node.element, Base).initY = pWH;
+								cast(node.element, Base).init();
+							}
+							else
+								node.element.y = pWH;
+							pWH += node.element.height > 0 ? node.element.height + gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + gap;
+						}
+				}
 			}
 			//only if width and height not specified in xml
 			//update width or height after layouting to permit good x and y placement for this

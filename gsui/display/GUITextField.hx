@@ -220,6 +220,11 @@ class GUITextField extends Base
 		
 	}
 	
+	/**
+	 * Set a new text that will be parsed through TONGUE and VARIABLES
+	 * @param	sourceText
+	 * @return
+	 */
 	public function updateText(?sourceText:String):String
 	{
 		if (sourceText != null)
@@ -282,6 +287,8 @@ class GUITextField extends Base
 				_strikeShape.parent.removeChild(_strikeShape);
 		}
 		#end
+		
+		init();
 		
 		return _textfield.text;
 	}
