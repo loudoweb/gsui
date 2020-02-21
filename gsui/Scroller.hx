@@ -138,7 +138,7 @@ class Scroller {
 	static function computeNeedScroll():Void
 	{
 			
-		if (_targetHeight * _parentRatio > _parentHeight + 1)//TODO use pixelbounds instead of simple height to not have masked height (when fixed in openfl)
+		if (_targetHeight > _parentHeight + 1)//TODO use pixelbounds instead of simple height to not have masked height (when fixed in openfl)
 		{
 			//SignalHandler.onScrollAvailable.dispatch();
 			hasScrolling = true;

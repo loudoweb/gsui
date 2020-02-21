@@ -6,6 +6,7 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
+import openfl.events.Event;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -55,23 +56,22 @@ class Sprite9Grid extends Base
 	 * @param	Width
 	 * @param	Height
 	 */
-	public function new(Graphic:BitmapData, Width:Int, Height:Int) 
+	public function new(xml:Fast, Graphic:BitmapData, Width:Int, Height:Int) 
 	{
 		_raw_pixels = Graphic;
-		initWidth = Width;
-		initHeight = Height;
-		super(null, Width, Height);
+		super(xml, Width, Height);
 		mouseEnabled = false;
 	}
 	
-	override function parse(xml:Fast):Void 
+	override function onAdded(e:Event):Void 
 	{
-		
+		super.onAdded(e);
 	}
 	
 	override public function init():Void 
 	{
 		resize(Std.int(initWidth), Std.int(initHeight));
+		super.init();
 	}
 	
 	public function resize(w:Int, h:Int):Void {

@@ -240,7 +240,6 @@ class GUITextField extends Base
 		var _this = this;
 		destText = GUI_VAR.map(destText, function (e) {
 			var currentMatch = e.matched(0);
-			trace(currentMatch);
 			//use binded variables
 			var binder:BindedVariables;
 			var variables = GUI._bindedVariables;

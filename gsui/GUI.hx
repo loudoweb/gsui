@@ -478,8 +478,7 @@ class GUI extends Sprite
 	 */
 	public static function _parseGrid9(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
-		var image = new Sprite9Grid(Assets.getBitmapData(_basePath + el.att.img, true), Std.int(ParserUtils.getWidth(el, parentWidth)), Std.int(ParserUtils.getHeight(el, parentHeight)));
-		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
+		return new Sprite9Grid(el, Assets.getBitmapData(_basePath + el.att.img, true), Std.int(parentWidth), Std.int(parentHeight));
 	}
 	/**
 	 * Text factory

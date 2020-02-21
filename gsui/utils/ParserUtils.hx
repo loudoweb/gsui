@@ -43,10 +43,15 @@ class ParserUtils
 	{
 		if (hasPercent(value))
 		{
-			return containerSize * Std.parseFloat(value.substr(0, value.length - 1)) * 0.01;
+			return containerSize * getPercent(value);
 		}else{
 			return Std.parseFloat(value);
 		}
+	}
+	
+	inline public static function getPercent(value:String):Float
+	{
+		return Std.parseFloat(value.substr(0, value.length - 1)) * 0.01;
 	}
 	
 	inline public static function hasPercent(value:String):Bool

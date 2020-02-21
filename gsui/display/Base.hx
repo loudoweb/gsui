@@ -26,10 +26,13 @@ class Base extends Sprite implements IDestroyable
 	public var initWidth:Float;
 	public var initHeight:Float;
 	
+	
 	public var usePercentX:Bool;
 	public var usePercentY:Bool;
 	public var usePercentWidth:Bool;
 	public var usePercentHeight:Bool;
+	var _percentWidth:Float;
+	var _percentHeight:Float;
 	
 	public var pivotX:Float;
 	public var pivotY:Float;
@@ -120,6 +123,7 @@ class Base extends Sprite implements IDestroyable
 		{
 			useParentWidth = false;
 			usePercentWidth = ParserUtils.hasPercent(xml.att.width);
+			_percentWidth = ParserUtils.getPercent(xml.att.width);
 			initWidth = ParserUtils.getWidth(xml, parentWidth);
 		}else{
 			useParentWidth = true;
@@ -131,6 +135,7 @@ class Base extends Sprite implements IDestroyable
 		{
 			useParentHeight = false;
 			usePercentHeight = ParserUtils.hasPercent(xml.att.height);
+			_percentHeight = ParserUtils.getPercent(xml.att.height);
 			initHeight = ParserUtils.getHeight(xml, parentHeight);
 		}else{
 			useParentHeight = true;
@@ -309,9 +314,19 @@ class Base extends Sprite implements IDestroyable
 	/**
 	 * Parent resize can modify this component
 	 */
-	function onParentResize():Void{
+	public function onParentResize():Void{
 		this.parentWidth = this.parent.width;
 		this.parentHeight = this.parent.height;
+		
+		if (useParentWidth)
+			initWidth = parentWidth;
+		else if (usePercentWidth)
+			initWidth = _percentWidth * parentWidth;
+			
+		if (useParentHeight)
+			initHeight = parentHeight;
+		else if (usePercentHeight)
+			initHeight = _percentHeight * parentHeight; 
 		
 		init();
 	}

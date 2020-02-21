@@ -175,6 +175,8 @@ class GUIGroup extends Base
 	
 	override public function init():Void 
 	{
+		var oldWidth = width;
+		var oldHeight = height;
 		
 		if (_layout != null)
 		{
@@ -252,10 +254,14 @@ class GUIGroup extends Base
 				case VERTICAL:
 					initHeight = height;
 			}
+		}
+		
+		if (oldWidth != width || oldHeight != height)
+		{
 			//setDirty();
 			dispatchResize();
-			
 		}
+		
 		//update this x and y
 		//GUI._placeDisplay(Data, this, ContainerW, ContainerH, initWidth, initHeight);
 		
