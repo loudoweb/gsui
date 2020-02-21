@@ -22,6 +22,10 @@ enum ELayout
 
 class GUIGroup extends Base
 {
+	public var isBackground:Bool = false;
+	
+	public var state(get, set):String;
+	
 	var _layout:ELayout;//default absolute
 	/**
 	 * Distance between children.
@@ -29,10 +33,9 @@ class GUIGroup extends Base
 	 * Auto (value of -1) means that children will take all the width or height of the group.
 	 * @default 0
 	 */
-	var _gap:Float;//
-	var _isAuto:Bool;//auto layout after creating nodes
+	var _gap:Float;
 	
-	public var isBackground:Bool = false;
+	var _isInit:Bool;
 	
 	/**
 	 * All nodes in the order of the xml (this is the order used to keep the layout from the xml)
@@ -45,7 +48,7 @@ class GUIGroup extends Base
 	
 	var _currentState:String = "";
 	
-	public var state(get, set):String;
+	
 	
 	function get_state():String{ return _currentState; } 
 
@@ -57,6 +60,12 @@ class GUIGroup extends Base
 		{
 			if(!node.isDefaultState()){
 				if (node.element != null && node.element.parent != null) {
+					
+					/*if (Std.is(node.element, Base))
+					{
+						cast(node.element, Base).onResize.remove(onChildResize);
+					}*/
+					
 					if (node.onOut != "")
 					{
 						var i = 0;
@@ -81,7 +90,13 @@ class GUIGroup extends Base
 			if (node.hasState(value) || node.isDefaultState())
 			{
 				if (node.element != null) {
+					
 						addChild(node.element);
+						
+						/*if (Std.is(node.element, Base))
+						{
+							cast(node.element, Base).onResize.add(onChildResize);
+						}*/
 						
 						if (node.onIn != "")
 						{
@@ -93,7 +108,10 @@ class GUIGroup extends Base
 				}
 			}
 		}
-		setDirty();
+		//guard to avoid calling init() twice when Group is instanciated
+		if(_isInit)
+			setDirty();
+		_isInit = true;
 		//dispatchResize();
 		return _currentState;
 	} 
@@ -107,6 +125,7 @@ class GUIGroup extends Base
 	 */
 	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
 	{
+		_isInit = false;
 		super(Data, ContainerW, ContainerH);
 	
 	}
@@ -127,7 +146,6 @@ class GUIGroup extends Base
 			this.mouseEnabled = this.mouseChildren = false;
 			
 		_gap = xml.has.gap ? (xml.att.gap == "auto" ? -1 : Std.parseFloat(xml.att.gap)) : 0;
-		_isAuto = xml.has.auto && xml.att.auto == "true";
 		
 		_nodes = GUI._parseXML(xml, initWidth, initHeight);
 		
@@ -160,16 +178,40 @@ class GUIGroup extends Base
 		
 		if (_layout != null)
 		{
-			//update nodes x and y
 			
-			var pWH:Float = 0;
-			var gap = _gap == -1 ? 0 : _gap;
-			for (node in _nodes)
+			//check total space to compare with wanted space for auto gap
+			var totalSpace = 0.0;
+			if (_gap == -1)
 			{
 				
-				switch(_layout)
+				for (node in _nodes)
 				{
-					case HORIZONTAL:
+					
+					switch(_layout)
+					{
+						case HORIZONTAL:
+							
+							totalSpace += node.element.width;
+						case VERTICAL:
+							totalSpace += node.element.height;
+							
+					}
+					
+				}
+			}
+			
+			//update nodes x and y
+			var pWH:Float = 0;
+			var gap = 0.0;
+			
+			switch(_layout)
+			{
+				case HORIZONTAL:
+					
+					gap = _gap == -1 ? (initWidth - totalSpace) / _nodes.length : _gap;
+					
+					for (node in _nodes)
+					{
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setX(pWH);
 						else if (Std.is(node.element, Base)){
@@ -179,7 +221,13 @@ class GUIGroup extends Base
 						else
 							node.element.x = pWH;
 						pWH += node.element.width > 0 ? node.element.width + gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + gap;
-					case VERTICAL:
+					}
+				case VERTICAL:
+					
+					gap = _gap == -1 ? (initHeight - totalSpace) / _nodes.length : _gap;
+					
+					for (node in _nodes)
+					{
 						if (Std.is(node.element, IPositionUpdatable))
 							cast(node.element, IPositionUpdatable).setY(pWH);
 						else if (Std.is(node.element, Base))
@@ -191,55 +239,10 @@ class GUIGroup extends Base
 						else
 							node.element.y = pWH;
 						pWH += node.element.height > 0 ? node.element.height + gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + gap;
-						
-				}
-				
+					}
 			}
 			
-			//take all the place if auto gap
-			if (_gap == -1)
-			{
-				
-				pWH = 0;
-				
-				switch(_layout)
-				{
-					case HORIZONTAL:
-						
-						gap = (initWidth - width) / _nodes.length;
-						
-						for (node in _nodes)
-						{
-							if (Std.is(node.element, IPositionUpdatable))
-								cast(node.element, IPositionUpdatable).setX(pWH);
-							else if (Std.is(node.element, Base)){
-								cast(node.element, Base).initX = pWH;
-								cast(node.element, Base).init();
-							}
-							else
-								node.element.x = pWH;
-							pWH += node.element.width > 0 ? node.element.width + gap : (node.width != "" ? Std.parseFloat(node.width) : 0) + gap;
-						}
-					case VERTICAL:
-						
-						gap = (initHeight - height) / _nodes.length;
-						
-						for (node in _nodes)
-						{
-							if (Std.is(node.element, IPositionUpdatable))
-								cast(node.element, IPositionUpdatable).setY(pWH);
-							else if (Std.is(node.element, Base))
-							{
-								
-								cast(node.element, Base).initY = pWH;
-								cast(node.element, Base).init();
-							}
-							else
-								node.element.y = pWH;
-							pWH += node.element.height > 0 ? node.element.height + gap : (node.height != "" ? Std.parseFloat(node.height) : 0) + gap;
-						}
-				}
-			}
+			
 			//only if width and height not specified in xml
 			//update width or height after layouting to permit good x and y placement for this
 			switch(_layout)
@@ -392,5 +395,10 @@ class GUIGroup extends Base
 			
 			super.invalidate();
 		}
+	}
+	
+	function onChildResize():Void
+	{
+		init();
 	}
 }

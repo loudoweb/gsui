@@ -62,10 +62,6 @@ class GUITextField extends Base
 		if (xml.has.id){
 			_textfield.name = xml.att.id;
 		}
-		if (_textfield.name == "start")
-		{
-			trace('ok');
-		}
 		
 		var textDef:Fast = GUI._getDef(xml.att.font);
 		
@@ -98,7 +94,6 @@ class GUITextField extends Base
 		else if(textDef != null && textDef.has.align)
 			format.align = textDef.att.align; 
 			
-		trace(_textfield.name, format.align);
 			
 		if (xml.has.bold)
 			format.bold = Std.string(xml.att.bold) == "true"; 
@@ -106,7 +101,6 @@ class GUITextField extends Base
 			format.bold = Std.string(textDef.att.bold) == "true"; 
 		
 		_textfield.defaultTextFormat = format;
-		trace(_textfield.name, _textfield.defaultTextFormat.align);
 		
 		if (xml.has.input && xml.att.input == "true") {
 			_textfield.type = TextFieldType.INPUT;
@@ -213,9 +207,7 @@ class GUITextField extends Base
 		}else{
 			_textfield.width = initWidth;
 		}
-		
-		trace(_textfield.name, _textfield.width, useParentWidth, parentWidth, usePercentWidth, initWidth, width, _textfield.defaultTextFormat.align, _textfield.autoSize);
-		
+				
 		super.init();
 		
 	}
@@ -263,8 +255,9 @@ class GUITextField extends Base
 			return binder.value;
           
         });
-		trace('dest', destText);
+		
 		this.text = destText;
+		
 		return destText;
 	}
 	
@@ -288,7 +281,10 @@ class GUITextField extends Base
 		}
 		#end
 		
-		init();
+		//init();
+		
+		//dispatchResize();
+		setDirty();
 		
 		return _textfield.text;
 	}
