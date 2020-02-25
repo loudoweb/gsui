@@ -21,6 +21,12 @@ class GraphicsUtils
 		graphics.drawRect(0, 0, width, height);
 		graphics.endFill();
 	}
+	public static function drawRoundRectFill(graphics:Graphics, width:Float, height:Float, color:Int = 0xff0000, alpha:Float = 1, round:Float = 50):Void
+	{
+		graphics.beginFill(color, alpha);
+		graphics.drawRoundRect(0, 0, width, height, round);
+		graphics.endFill();
+	}
 	public static function drawCircleFill(graphics:Graphics, diameter:Float, color:Int = 0xff0000, alpha:Float = 1):Void
 	{
 		graphics.beginFill(color, alpha);

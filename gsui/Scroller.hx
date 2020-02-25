@@ -66,15 +66,14 @@ class Scroller {
 	static var _bar:Sprite;
 	static var _barBounds:Rectangle;
 	
-	public static function createScrollbar(height:Int, posX:Int):Sprite
+	public static function createScrollbar(height:Int, width:Int, posX:Int = 0, ratio:Float = 1):Sprite
 	{
 		scrollbar = new Sprite();
 		_bar = new Sprite();
-		GraphicsUtils.drawRectFill(scrollbar.graphics, 10, height - 20, 0x786E64, 0.2);
-		GraphicsUtils.drawRectFill(_bar.graphics, 10, (height - 20) / 3, 0x786E64, 0.3);
+		GraphicsUtils.drawRectFill(scrollbar.graphics, 20, height, 0xCCCCCC, 0.8);
+		GraphicsUtils.drawRoundRectFill(_bar.graphics, 20, (height) / 3, 0xAAAAAA, 1, 20);
 		scrollbar.addChild(_bar);
-		scrollbar.x = Lib.current.stage.stageWidth - scrollbar.width - 10 + posX;
-		scrollbar.y = 10;
+		scrollbar.x = width + posX / ratio - scrollbar.width;
 		_barBounds = new Rectangle(0, 0, 0, scrollbar.height - _bar.height);
 		_bar.buttonMode = true;
 		fixedElement = scrollbar;
@@ -129,9 +128,7 @@ class Scroller {
 			return;
 		
 		_targetHeight = target.height;
-				
-		trace(_targetHeight , _parentHeight, _targetHeight * _parentRatio);
-		
+						
 		computeNeedScroll();
 	}
 	
@@ -334,7 +331,7 @@ class Scroller {
 	   Parent of target can change his size
 	   @param	addedSize
 	**/
-	public static function onParentSizeChanged (width:Float, height:Float, ratio:Float = 1, posX:Float = 0, posY:Float = 0) {
+	public static function onParentSizeChanged (width:Float, height:Float, ratio:Float = 1, posX:Float = 0, posY:Float = 0, originWidth:Float) {
 		_parentWidth = width;
 		_parentHeight = height;
 		_parentRatio = ratio;
@@ -342,8 +339,8 @@ class Scroller {
 		_posY = posY;
 		
 		if (scrollbar != null)
-			scrollbar.x = Lib.current.stage.stageWidth - scrollbar.width - 10 + posX;
-		
+			scrollbar.x = originWidth + posX / ratio - scrollbar.width;
+					
 		computeNeedScroll();
 	}
 	/**
