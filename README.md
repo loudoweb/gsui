@@ -118,8 +118,13 @@ Must be in fonts folder and have lowercase extension in ttf only.
 - [ ] remove bindx2 dependency ?
 - [ ] add macros to include classes from xml
 - [ ] Render should also handle CheckBox and Radio
-- [ ] Textfield should inherits Base to allow repositioning if in boxB or boxV
+- [X] Textfield should inherits Base to allow repositioning if in boxB or boxV
 - [ ] forbids setting x in boxH and y in boxV
+- [X] add app scroller
+- [ ] add size="+1" and size="-1" to change size of default font relatively
+- [ ] add margin
+- [ ] add sticky elements
+- [ ] GuiRender should have auto gap
 
 # dependencies
 - actuate

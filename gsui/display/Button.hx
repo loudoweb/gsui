@@ -117,7 +117,7 @@ class Button extends GenericButton
 							{
 								GUI.getTransition(onHover).start(node.element);
 							}
-						}else if (_currentState == "hover" && value == "up" && node.onUp != "")
+						}else if (value == "up" && node.onUp != "")
 						{
 							for (onUp in node.onUp.split(","))
 							{

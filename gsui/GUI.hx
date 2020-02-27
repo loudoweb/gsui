@@ -625,7 +625,8 @@ class GUI extends Sprite
 	public static function _parseShape(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display = new GUIShape(fast, parentWidth, parentHeight);
-		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
+		//return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
+		return display;
 	}
 	
 	public static function _parseSWF(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject

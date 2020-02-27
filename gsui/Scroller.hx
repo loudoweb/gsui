@@ -66,19 +66,42 @@ class Scroller {
 	static var _bar:Sprite;
 	static var _barBounds:Rectangle;
 	
-	public static function createScrollbar(height:Int, width:Int, posX:Int = 0, ratio:Float = 1):Sprite
+	/**
+	 * Create a scrollbar. Then you have to addchild to something except GUI.instance
+	 * @param	height
+	 * @param	width
+	 * @param	posX
+	 * @param	ratio
+	 * @param	isMobile
+	 * @return
+	 */
+	public static function createScrollbar(stageWidth:Float, stageHeight:Float, isMobile:Bool = false):Sprite
 	{
-		scrollbar = new Sprite();
-		_bar = new Sprite();
-		GraphicsUtils.drawRectFill(scrollbar.graphics, 20, height, 0xCCCCCC, 0.8);
-		GraphicsUtils.drawRoundRectFill(_bar.graphics, 20, (height) / 3, 0xAAAAAA, 1, 20);
-		scrollbar.addChild(_bar);
-		scrollbar.x = width + posX / ratio - scrollbar.width;
-		_barBounds = new Rectangle(0, 0, 0, scrollbar.height - _bar.height);
-		_bar.buttonMode = true;
-		fixedElement = scrollbar;
-		fixedElementOriginY = scrollbar.y;
+		if (scrollbar == null)
+		{
+			scrollbar = new Sprite();
+			_bar = new Sprite();
+			scrollbar.addChild(_bar);
+			_barBounds = new Rectangle(0, 0, 0, scrollbar.height - _bar.height);
+			_bar.buttonMode = true;
+		}
+		
+		
+		drawScrollbarGraphics(stageWidth, stageHeight, isMobile);
+		
 		return scrollbar;
+	}
+	
+	static function drawScrollbarGraphics(stageWidth:Float, stageHeight:Float, isMobile:Bool = false):Void
+	{
+		
+		var barW = isMobile ? 10 : 20;
+		var scrollerAlpha = isMobile ? 0.3 : 0.8;
+		GraphicsUtils.drawRectFill(scrollbar.graphics, barW, stageHeight, 0xCCCCCC, scrollerAlpha);
+		GraphicsUtils.drawRoundRectFill(_bar.graphics, barW, (stageHeight) / 3, 0xAAAAAA, 1, barW);
+		_barBounds.setTo(0, 0, 0, scrollbar.height - _bar.height);
+		scrollbar.x = stageWidth - scrollbar.width;
+		trace(scrollbar.visible, scrollbar.parent, scrollbar.stage, scrollbar.x, scrollbar.y, scrollbar.width, scrollbar.height);
 	}
 	
 	public static function set_target(_target:DisplayObject):DisplayObject
@@ -112,7 +135,7 @@ class Scroller {
 		
 		if (scrollbar != null)
 		{
-			scrollbar.parent.addChild(scrollbar);
+			//scrollbar.parent.addChild(scrollbar);
 			_bar.y = 0;
 			
 		}
@@ -159,7 +182,7 @@ class Scroller {
 		if (scrollbar != null)
 		{
 			scrollbar.visible = true;
-			scrollbar.parent.addChild(scrollbar);
+			//scrollbar.parent.addChild(scrollbar);
 			_bar.y = 0;
 			_bar.addEventListener(MouseEvent.MOUSE_DOWN, onBarDown);
 		}
@@ -338,8 +361,8 @@ class Scroller {
 		_posX = posX;
 		_posY = posY;
 		
-		if (scrollbar != null)
-			scrollbar.x = originWidth + posX / ratio - scrollbar.width;
+		//if (scrollbar != null)
+			//scrollbar.x = originWidth + posX / ratio - scrollbar.width;
 					
 		computeNeedScroll();
 	}
