@@ -54,7 +54,7 @@ class Scroller {
 	static var _deltaDist:Float = 0;
 	static var _globalDist:Float = 0;
 	
-	static var _targetHeight:Float;
+	public static var targetHeight(default, null):Float;
 	
 	static var _parentWidth:Float;
 	static var _parentHeight:Float;
@@ -150,7 +150,7 @@ class Scroller {
 		if (target ==  null)
 			return;
 		
-		_targetHeight = target.height;
+		targetHeight = target.height;
 						
 		computeNeedScroll();
 	}
@@ -158,7 +158,7 @@ class Scroller {
 	static function computeNeedScroll():Void
 	{
 			
-		if (_targetHeight > _parentHeight + 1)//TODO use pixelbounds instead of simple height to not have masked height (when fixed in openfl)
+		if (targetHeight > _parentHeight + 1)//TODO use pixelbounds instead of simple height to not have masked height (when fixed in openfl)
 		{
 			//SignalHandler.onScrollAvailable.dispatch();
 			hasScrolling = true;
@@ -346,6 +346,9 @@ class Scroller {
 		
 		target.scrollRect = rect;
 		
+		if (_bar != null)
+			_bar.y = Math.abs(rect.y / maxY()) * (scrollbar.height - _bar.height);
+		
 		onScroll.dispatch(rect.y);
 		
 	}
@@ -370,8 +373,8 @@ class Scroller {
 	   Components that update their height need to call this function to update the scroll capacity
 	   @param	addedSize
 	**/
-	public static function onTargetSizeChanged (width:Float, height:Float) {
-		_targetHeight = height;
+	public static function onTargetSizeChanged () {
+		targetHeight = target.height;
 		computeNeedScroll();
 	}
 	
@@ -431,8 +434,8 @@ class Scroller {
 	
 	inline static function maxY():Float
 	{
-		//return (_targetHeight *  _parentRatio - _parentHeight) / _parentRatio - 1;//-1 to be sure
-		return (_targetHeight - _parentHeight) / _parentRatio;//-1 to be sure
+		//return (targetHeight *  _parentRatio - _parentHeight) / _parentRatio - 1;//-1 to be sure
+		return (targetHeight - _parentHeight) / _parentRatio;//-1 to be sure
 	}
 	
 	static function updateScroll(_y:Float):Void

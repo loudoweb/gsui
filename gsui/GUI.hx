@@ -97,7 +97,7 @@ class GUI extends Sprite
 	static public var GUI_HEIGHT(default, null):Float;
 	static public var TONGUE:Tongue;
 	static public var instance(default, null):GUI;
-	static public var onSizeChanged:Event<Float->Float->Void> = new Event<Float->Float->Void>();
+	static public var onSizeChanged:Event<Void->Void> = new Event<Void->Void>();
 	
 	/**
 	 * top group currently on display list
@@ -241,7 +241,7 @@ class GUI extends Sprite
 			_desaturate(null);
 		}
 		
-		onSizeChanged.dispatch(instance.width, instance.height);
+		onSizeChanged.dispatch();
 		
 		//create dynamic class to handle elements by custom code 
 		//TODO generate by macro
@@ -291,7 +291,7 @@ class GUI extends Sprite
 			_saturate(Std.string(el.att.saturate).split(","));
 		}
 		
-		onSizeChanged.dispatch(instance.width, instance.height);
+		onSizeChanged.dispatch();
 		
 		//create dynamic class to handle elements by custom code
 		/*
@@ -337,7 +337,7 @@ class GUI extends Sprite
 			_desaturate(Std.string(el.att.saturate).split(","));
 		}
 		
-		onSizeChanged.dispatch(instance.width, instance.height);
+		onSizeChanged.dispatch();
 		
 		//handle state game with IStateManager
 		if (_gameState != null)

@@ -41,7 +41,7 @@ class GUIShape extends Base
 	
 	override public function init():Void 
 	{
-		super.init();
+		
 		
 		this.graphics.clear();
 		
@@ -58,6 +58,8 @@ class GUIShape extends Base
 				else
 					GraphicsUtils.drawCircle(this.graphics, initWidth, color, stroke );
 		}
+		
+		super.init();
 	}
 	
 }

@@ -81,4 +81,13 @@ class PlatformUtils
 		return _isIOSWebview;
 	}
 	
+	
+	public static function fixMobileHeight():Void
+	{
+		#if html5
+		Browser.document.body.style.height = Browser.window.innerHeight + "px";
+		#end
+	}
+	
+	
 }
