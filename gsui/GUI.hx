@@ -30,6 +30,8 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.display.PixelSnapping;
+import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 
 import openfl.display.Sprite;
 import openfl.errors.Error;
@@ -460,12 +462,35 @@ class GUI extends Sprite
 		
 		if (el.has.width)
 		{
-			image.width = Std.parseInt(el.att.width);
+			
+			
+			if (el.has.mask && el.att.mask == "true")
+			{
+				//TOFIX scrollRect on Bitmap doesn't work, and scrollrect give unwanted size of image, wo we are forced to copy pixels
+				var bmData = new BitmapData(Std.int(ParserUtils.getWidth(el, parentWidth)), Std.int(ParserUtils.getHeight(el, parentHeight)));
+				var _w = ParserUtils.getWidth(el, parentWidth);
+				var mat = new Matrix();
+				mat.scale(_w / image.width, _w / image.width);//mask auto means keep ratio
+				bmData.draw(image, mat);
+				var bm = new Bitmap(bmData, PixelSnapping.AUTO, true);
+				trace(image.width, image.height, image.scaleX, image.scaleY);
+				image = bm;
+			}else{
+				image.width = ParserUtils.getWidth(el, parentWidth);
+				
+				if(el.has.keepRatio && el.att.keepRatio == "true"){
+					image.scaleY = image.scaleX;
+				}
+			}
+
+			
 		}
+		
 		if (el.has.height)
 		{
-			image.height = Std.parseInt(el.att.height);
+			image.height = ParserUtils.getHeight(el, parentHeight);
 		}
+		trace('image', image.width, image.height, image.scaleX, image.scaleY);
 		
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
