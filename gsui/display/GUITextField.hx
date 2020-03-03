@@ -46,8 +46,9 @@ class GUITextField extends Base
 		
 		super(Data, ContainerW, ContainerH);
 		
+		#if debug
 		_colorDebug = 0xFF0000;
-		
+		#end
 	}
 	
 	override function parse(xml:Fast):Void 

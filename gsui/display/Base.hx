@@ -203,9 +203,9 @@ class Base extends Sprite implements IDestroyable
 		
 		//{ MASK
 		
-		/*if (xml.has._maskW && xml.has._maskH)
+		/*if (xml.has.mask && xml.att.mask == "center")
 		{
-			_mask = new Rectangle(0, 0, Std.parseFloat(xml.att._maskW), Std.parseFloat(xml.att._maskH));
+			scrollRect = new Rectangle(0, 0, Std.parseFloat(xml.att._maskW), Std.parseFloat(xml.att._maskH));
 		}
 		
 		if(pos._mask != null)

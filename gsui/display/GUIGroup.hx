@@ -1,4 +1,5 @@
 package gsui.display;
+import gsui.BindedVariables;
 import gsui.interfaces.IPositionUpdatable;
 import gsui.utils.XMLUtils;
 import openfl.display.DisplayObject;
@@ -166,11 +167,37 @@ class GUIGroup extends Base
 			case "boxH":
 			_layout = HORIZONTAL;
 		}
+		
+		
+		if (xml.has.currentState)
+		{
+			if (xml.att.currentState.indexOf("{") != -1)
+			{
+				var variables = GUI._bindedVariables;
+				var binder:BindedVariables;
+				if (variables.exists(xml.att.currentState))
+				{
+					binder = variables.get(xml.att.currentState);
+					_currentState = binder.value;
+				}else {
+					binder = new BindedVariables(xml.att.currentState, "");
+					variables.set(xml.att.currentState, binder);
+					_currentState = "";
+				}
+				binder.registerGroup(this);
+				
+			}else{
+				_currentState = xml.att.currentState; 
+			}
+		}else{
+			_currentState = ""; 
+		}
+		
 	}
 	
 	override public function preInit():Void 
 	{
-		state = "";
+		state = _currentState;
 	}
 	
 	override public function init():Void 
