@@ -301,12 +301,15 @@ class Button extends GenericButton
 				_customStates = guiButtonData.state;
 				handleState(_currentState);
 			}else {
+				_currentState = "up";
 				_customStates = "";
+				handleState(_currentState);
 			}
 			customHoverParam = guiButtonData.onHover;
 			customClickParam = guiButtonData.click;
 			mouseCallback = guiButtonData.clickHandler;
 			behaviour = guiButtonData.behaviour;
+			disableMouseClick = false;
 			//disableMouseClick = mouseCallback != null ? false : true;
 			//disableGUICallback = disableMouseClick;
 		}

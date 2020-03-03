@@ -1,4 +1,5 @@
 package gsui;
+import gsui.display.GUIGroup;
 import gsui.display.GUITextField;
 
 /**
@@ -10,17 +11,16 @@ import gsui.display.GUITextField;
 class BindedVariables
 {
 	public var name:String;
-	@:isVar public var value(get,set):String;
+	public var value(default,set):String;
 	public var bindedTextFields:Array<GUITextField> ;
+	public var bindedGroups:Array<GUIGroup> ;
 	
 	public function new(name:String, value:String) 
 	{
 		this.name = name;
-		reset();
+		bindedTextFields = [];
+		bindedGroups = [];
 		this.value = value;
-	}
-	private function get_value():String {
-		return value;
 	}
 	private function set_value(newValue:String):String {
 		value = newValue;
@@ -29,7 +29,8 @@ class BindedVariables
 	}
 	public function reset():Void
 	{
-		bindedTextFields = [];
+		bindedTextFields.splice(0, bindedTextFields.length);
+		bindedGroups.splice(0, bindedGroups.length);
 	}
 	public function registerTextField(t:GUITextField):Void
 	{
@@ -41,12 +42,31 @@ class BindedVariables
 		if(bindedTextFields.indexOf(t) != -1)
 			bindedTextFields.remove(t);
 	}
+	public function registerGroup(t:GUIGroup):Void
+	{
+		if(bindedGroups.indexOf(t) == -1)
+			bindedGroups.push(t);
+	}
+	public function unregisterGroup(t:GUIGroup):Void
+	{
+		if(bindedGroups.indexOf(t) != -1)
+			bindedGroups.remove(t);
+	}
 	private function update():Void
 	{
 		for (textfield in bindedTextFields)
 		{
 			textfield.updateText(textfield.sourceText);
 		}
+		for (group in bindedGroups)
+		{
+			group.state = value;
+		}
+	}
+	public function destroy():Void
+	{
+		bindedTextFields = null;
+		bindedGroups = null;
 	}
 	
 	

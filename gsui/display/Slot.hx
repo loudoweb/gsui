@@ -42,18 +42,20 @@ class Slot extends Base
 		if (Assets.isLocal(name))
 		{
 			//TODO Bitmap OR Atlas
-			addChild(imageResize(new Bitmap(Assets.getBitmapData(name), PixelSnapping.AUTO, true)));
+			addChild(imageResize(new Bitmap(Assets.getBitmapData(name, #if html5 false #else true #end), PixelSnapping.AUTO, true)));
+			//addChild(imageResize(new Bitmap(Assets.getBitmapData(name), PixelSnapping.AUTO, true)));
 			setDirty();
 		}else if (Assets.exists(name)){
 			//TODO signal download
-			Assets.loadBitmapData(name).onComplete(onMediaComplete);
+			Assets.loadBitmapData(name, #if html5 false #else true #end).onComplete(onMediaComplete);
 		}
 		
 	}
 	
 	public function addGroup(name:String):GUIGroup
 	{
-		var group = GUI._parseGroup(GUI.getFast(name), initWidth, initHeight);
+		var group = GUI.getGroup(name, initWidth, initHeight, true);
+		//group.init();
 		addChild(group);
 		setDirty();
 		return cast group;

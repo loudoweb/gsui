@@ -120,7 +120,7 @@ class GUI extends Sprite
 	/**
 	 * binded variables for textfields
 	 */
-	@:allow(gsui.display.GUITextField)
+	@:allow(gsui.display.GUITextField, gsui.display.GUIGroup)
 	static var _bindedVariables:StringMap<BindedVariables>;
 	
 	static var _transition:StringMap<Transition>;
@@ -368,6 +368,11 @@ class GUI extends Sprite
 		}
 	}
 	
+	/**
+	 * Get xml of a group
+	 * @param	groupName
+	 * @return	xml (fast)
+	 */
 	public static function getFast(groupName:String):Fast
 	{
 		return _viewsConf.get(groupName);
@@ -489,8 +494,8 @@ class GUI extends Sprite
 		if (el.has.height)
 		{
 			image.height = ParserUtils.getHeight(el, parentHeight);
+			//TODO mask, keep ratio
 		}
-		trace('image', image.width, image.height, image.scaleX, image.scaleY);
 		
 		return _placeDisplay(el, image, parentWidth, parentHeight, image.width, image.height);
 	}
@@ -531,6 +536,7 @@ class GUI extends Sprite
 		var display = new GUIGroup(fast, parentWidth, parentHeight);
 		return display;
 	}
+	
 	/**
 	 * Render Factory (group with item renderer)
 	 * @param	fast
@@ -818,12 +824,38 @@ class GUI extends Sprite
 				child.filters = [FilterUtils.saturate(0.25), new ColorMatrixFilter(FilterUtils.hue(35 * Math.PI))];
 		}
 	}
-	public static function _getGroup(name:String):GUIGroup
+	/**
+	 * Get active top views.
+	 * An active top views is a view set in config.xml
+	 * A view become active when using _createConf() or _addConf()
+	 * @param	name
+	 * @return Get active top view or If the group is not currently in top views, return null
+	 */
+	public static function _getTopGroup(name:String):GUIGroup
 	{
 		if (_activeTopViews.exists(name))
 			return _activeTopViews.get(name);
 		return null;
 	}
+	
+	/**
+	 * Get a group. Parse it if not already parsed and add it to cache if needed.
+	 * @param	name
+	 * @param	useCache default true. Add it to _views to easily retrieve.
+	 * @return	
+	 */
+	public static function getGroup(name:String, width:Float, height:Float, useCache:Bool = true):GUIGroup
+	{
+		if(!_views.exists(name)){
+			var group:GUIGroup = cast _parseGroup(_viewsConf.get(name), width, height);
+			if(useCache)
+				_views.set(name, group);
+			return group;
+		}else {
+			return _views.get(name);
+		}
+	}
+	
 	public static function _bindVariable(name:String, value:String):Void
 	{
 		if (_bindedVariables.exists(name)) {

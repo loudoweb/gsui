@@ -125,6 +125,7 @@ Must be in fonts folder and have lowercase extension in ttf only.
 - [ ] add margin
 - [ ] add sticky elements
 - [ ] GuiRender should have auto gap
+- [ ] Bind states for group only when on screen
 
 # dependencies
 - actuate
