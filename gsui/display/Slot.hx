@@ -37,24 +37,24 @@ class Slot extends Base
 		
 	}
 	
-	public function addImage(name:String):Void
+	public function addImage(name:String, useCache:Bool = true):Void
 	{
 		if (Assets.isLocal(name))
 		{
 			//TODO Bitmap OR Atlas
-			addChild(imageResize(new Bitmap(Assets.getBitmapData(name, #if html5 false #else true #end), PixelSnapping.AUTO, true)));
+			addChild(imageResize(new Bitmap(Assets.getBitmapData(name, useCache), PixelSnapping.AUTO, true)));
 			//addChild(imageResize(new Bitmap(Assets.getBitmapData(name), PixelSnapping.AUTO, true)));
 			setDirty();
 		}else if (Assets.exists(name)){
 			//TODO signal download
-			Assets.loadBitmapData(name, #if html5 false #else true #end).onComplete(onMediaComplete);
+			Assets.loadBitmapData(name, useCache).onComplete(onMediaComplete);
 		}
 		
 	}
 	
-	public function addGroup(name:String):GUIGroup
+	public function addGroup(name:String, useCache:Bool = true):GUIGroup
 	{
-		var group = GUI.getGroup(name, initWidth, initHeight, true);
+		var group = GUI.getGroup(name, initWidth, initHeight, useCache);
 		//group.init();
 		addChild(group);
 		setDirty();
