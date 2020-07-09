@@ -7,7 +7,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.Assets;
 import openfl.display.Shape;
 import openfl.geom.Point;
@@ -24,7 +24,7 @@ import openfl.events.MouseEvent;
 
 class GUITextField extends Base
 {
-	public static var TONGUE_VAR:EReg = new EReg("{#[a-zA-Z0-9-_]+}", "ig");
+	public static var TONGUE_VAR:EReg = new EReg("{[$a-zA-Z0-9-_]+}", "ig");
 	public static var GUI_VAR:EReg = new EReg("{[a-zA-Z0-9-_ ]+}", "ig");
 	
 	public var sourceText:String;
@@ -38,7 +38,7 @@ class GUITextField extends Base
 	 * Keep height set in xml
 	 */
 	var _keepHeight:Bool;
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		
 		_textfield = new TextField();
@@ -51,7 +51,7 @@ class GUITextField extends Base
 		#end
 	}
 	
-	override function parse(xml:Fast):Void 
+	override function parse(xml:Access):Void 
 	{
 		super.parse(xml);
 		
@@ -64,7 +64,7 @@ class GUITextField extends Base
 			_textfield.name = xml.att.id;
 		}
 		
-		var textDef:Fast = GUI._getDef(xml.att.font);
+		var textDef:Access = GUI._getDef(xml.att.font);
 		
 		
 		if (textDef == null)
@@ -234,7 +234,7 @@ class GUITextField extends Base
 				return  tongue.get(currentMatch.substring(1, currentMatch.length - 1), "interface", true);
 			  
 			});
-		}else if(destText.indexOf("{#") != -1){
+		}else if(destText.indexOf("{$") != -1){
 			trace("tongue is null and you try to use a localized text : " + destText);
 		}
 		//variable

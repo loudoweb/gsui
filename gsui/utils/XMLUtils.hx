@@ -1,5 +1,5 @@
 package gsui.utils;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 
 /**
  * ...
@@ -8,10 +8,10 @@ import haxe.xml.Fast;
 class XMLUtils 
 {
 
-	public static function getFirstChild(fast:Fast):Fast
+	inline public static function getFirstChild(xml:Access):Access
 	{
 		var child = null;
-		for (el in fast.elements)
+		for (el in xml.elements)
 		{
 			child = el;
 			break;

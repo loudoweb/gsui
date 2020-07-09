@@ -1,6 +1,6 @@
 package gsui.display;
 
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -14,7 +14,7 @@ import openfl.display.Sprite;
 class Slot extends Base
 {
 
-	public function new(xml:Fast, parentWidth:Float, parentHeight:Float) 
+	public function new(xml:Access, parentWidth:Float, parentHeight:Float) 
 	{
 		super(xml, parentWidth, parentHeight);
 		

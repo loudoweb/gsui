@@ -1,6 +1,6 @@
 package gsui.display;
 
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import motion.Actuate;
 import openfl.Assets;
 import openfl.display.Bitmap;
@@ -37,12 +37,12 @@ class ProgressBar extends Sprite
 	
 	
 	
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float, basePath:String) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float, basePath:String) 
 	{
 		super();
 		if(Data.has.id)
 			name = Data.att.id;
-		var pb_def:Fast = Data.has.def ? GUI._getDef(Data.att.def) : null;
+		var pb_def:Access = Data.has.def ? GUI._getDef(Data.att.def) : null;
 		
 		
 		_bg = new Bitmap(Assets.getBitmapData(basePath + (pb_def != null && pb_def.has.bg ? pb_def.att.bg : Data.att.bg)), PixelSnapping.ALWAYS, true);

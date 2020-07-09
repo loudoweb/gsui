@@ -1,7 +1,7 @@
 package gsui.display;
 
 import gsui.utils.DestroyUtils;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
@@ -56,7 +56,7 @@ class Sprite9Grid extends Base
 	 * @param	Width
 	 * @param	Height
 	 */
-	public function new(xml:Fast, Graphic:BitmapData, Width:Int, Height:Int) 
+	public function new(xml:Access, Graphic:BitmapData, Width:Int, Height:Int) 
 	{
 		_raw_pixels = Graphic;
 		super(xml, Width, Height);

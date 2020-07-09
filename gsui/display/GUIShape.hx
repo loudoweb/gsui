@@ -3,7 +3,7 @@ package gsui.display;
 import gsui.ElementPosition;
 import gsui.utils.GraphicsUtils;
 import gsui.utils.ParserUtils;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.Shape;
 
 /**
@@ -22,14 +22,14 @@ class GUIShape extends Base
 	var stroke:Int;
 	var type:EShapeType;
 	
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		
 		super(Data, ContainerW, ContainerH);
 		
 	}
 	
-	override function parse(xml:Fast):Void 
+	override function parse(xml:Access):Void 
 	{
 		super.parse(xml);
 		color = ParserUtils.getColor(xml);

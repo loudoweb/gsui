@@ -4,7 +4,7 @@ import gsui.utils.XMLUtils;
 import openfl.display.Bitmap;
 import openfl.display.PixelSnapping;
 import openfl.events.MouseEvent;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.Assets;
 import openfl.display.DisplayObject;
 #if debug
@@ -150,7 +150,7 @@ class Button extends GenericButton
 		}
 	}
 	
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		super( Data.has.click ? Data.att.click : "", Data.has.onHover ? Data.att.onHover : "");
 		

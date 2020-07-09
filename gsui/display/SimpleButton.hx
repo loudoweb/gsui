@@ -4,7 +4,7 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
 import openfl.events.MouseEvent;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 
 /**
  * Simple button that uses up to 3 images to handle up, over and selected states.
@@ -24,7 +24,7 @@ class SimpleButton extends GenericButton
 	var _hover:Bitmap  = null;
 	var _selected:Bitmap  = null;
 	
-	public function new(Up:BitmapData, Hover:BitmapData, Selected:BitmapData, Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Up:BitmapData, Hover:BitmapData, Selected:BitmapData, Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		super(Data.has.click ? Data.att.click : "", Data.has.onHover ? Data.att.onHover : "");
 		

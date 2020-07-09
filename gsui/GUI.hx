@@ -22,7 +22,7 @@ import gsui.utils.MaskUtils;
 import gsui.utils.ParserUtils;
 import gsui.utils.ReplaceUtils;
 import haxe.ds.StringMap;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import lime.app.Event;
 import motion.Actuate;
 import openfl.Assets;
@@ -112,11 +112,11 @@ class GUI extends Sprite
 	/**
 	 * to create a gui
 	 */
-	static var _viewsConf:StringMap<Fast>;
+	static var _viewsConf:StringMap<Access>;
 	/**
 	 * store definitions for shared components
 	 */
-	static var _def:StringMap<Fast>;
+	static var _def:StringMap<Access>;
 	/**
 	 * binded variables for textfields
 	 */
@@ -128,8 +128,8 @@ class GUI extends Sprite
 	
 	
 	static var _basePath:String;
-	static var _interfaceFast:Fast;
-	static var _confFast:Fast;
+	static var _interfaceAccess:Access;
+	static var _confAccess:Access;
 	
 	static var _package:String;
 	static var _gameState:IStateManager;
@@ -165,8 +165,8 @@ class GUI extends Sprite
 		
 		_activeTopViews = new StringMap<GUIGroup>();
 		_views = new StringMap<GUIGroup>();
-		_viewsConf = new StringMap<Fast>();
-		_def = new StringMap<Fast>();
+		_viewsConf = new StringMap<Access>();
+		_def = new StringMap<Access>();
 		_bindedVariables = new StringMap<BindedVariables>();
 		_transition = new StringMap<Transition>();
 		
@@ -174,12 +174,12 @@ class GUI extends Sprite
 		var xmlInterface:String = Assets.getText(xml);
 		var xmlConf:String		= Assets.getText(conf);
 		
-		_interfaceFast = new Fast(Xml.parse(xmlInterface).firstElement());
-		_confFast = new Fast(Xml.parse(xmlConf).firstElement());
+		_interfaceAccess = new Access(Xml.parse(xmlInterface).firstElement());
+		_confAccess = new Access(Xml.parse(xmlConf).firstElement());
 		
-		parseConf(_interfaceFast);
+		parseConf(_interfaceAccess);
 		
-		#if dconsole
+		#if (dconsole && debug)
 		DC.registerFunction(GUI.drawDebug, 'boxes', 'draw all boxes from GUI');
 		#end
 	}
@@ -214,7 +214,7 @@ class GUI extends Sprite
 	 */
 	public static function _createConf(conf:String):Void
 	{
-		var el:Fast = _confFast.node.resolve(conf);
+		var el:Access = _confAccess.node.resolve(conf);
 		
 		for (group in _activeTopViews) 
 		{
@@ -270,7 +270,7 @@ class GUI extends Sprite
 	 */
 	public static function _addConf(conf:String):Void
 	{
-		var el:Fast = _confFast.node.resolve(conf);
+		var el:Access = _confAccess.node.resolve(conf);
 		var guis:Array<String> = Std.string(el.att.groups).split(",");
 		var groupRoot:GUIGroup;
 		for (gui in guis)
@@ -320,7 +320,7 @@ class GUI extends Sprite
 	 */
 	public static function _removeConf(conf:String):Void
 	{
-		var el:Fast = _confFast.node.resolve(conf);
+		var el:Access = _confAccess.node.resolve(conf);
 		var guis:Array<String> = Std.string(el.att.groups).split(",");
 		var groupRoot:GUIGroup;
 		for (gui in guis)
@@ -353,7 +353,7 @@ class GUI extends Sprite
 	 * Parse the whole xml to store all parts in a StringMap
 	 * @param	fast from xml of interface
 	 */
-	private function parseConf(fast:Fast):Void {
+	private function parseConf(fast:Access):Void {
 		for (el in fast.elements)
 		{
 			if (el.name == "definitions")
@@ -373,7 +373,7 @@ class GUI extends Sprite
 	 * @param	groupName
 	 * @return	xml (fast)
 	 */
-	public static function getFast(groupName:String):Fast
+	public static function getAccess(groupName:String):Access
 	{
 		return _viewsConf.get(groupName);
 	}
@@ -385,7 +385,7 @@ class GUI extends Sprite
 	 * @param	ContainerH
 	 * @return
 	 */
-	public static function _parseXML(Data:Fast, ContainerW:Float, ContainerH:Float):Array<GUINode>
+	public static function _parseXML(Data:Access, ContainerW:Float, ContainerH:Float):Array<GUINode>
 	{
 		var _nodes:Array<GUINode> = new Array<GUINode>();
 		var display:DisplayObject = null;
@@ -444,7 +444,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseImage(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseImage(el:Access, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var image:DisplayObject;
 		
@@ -506,7 +506,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseGrid9(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseGrid9(el:Access, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		return new Sprite9Grid(el, Assets.getBitmapData(_basePath + el.att.img, true), Std.int(parentWidth), Std.int(parentHeight));
 	}
@@ -517,7 +517,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseText(el:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject//TODO vAlign
+	public static function _parseText(el:Access, ?parentWidth:Float, ?parentHeight:Float):DisplayObject//TODO vAlign
 	{
 		
 		//create textfield
@@ -530,7 +530,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseGroup(fast:Fast, parentWidth:Float, parentHeight:Float):DisplayObject
+	public static function _parseGroup(fast:Access, parentWidth:Float, parentHeight:Float):DisplayObject
 	{	
 		//TODO create GuiLayer and give ability to reorder/redispatch in realtime
 		var display = new GUIGroup(fast, parentWidth, parentHeight);
@@ -544,7 +544,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseRender(fast:Fast, parentWidth:Float, parentHeight:Float):DisplayObject
+	public static function _parseRender(fast:Access, parentWidth:Float, parentHeight:Float):DisplayObject
 	{	
 		var display = new GUIRender(fast, parentWidth, parentHeight);
 		return display;
@@ -557,7 +557,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseSimpleButton(el:Fast, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseSimpleButton(el:Access, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var _default:BitmapData = el.has.name ? Assets.getBitmapData(_basePath+el.att.name, true) : null;
 		var hover:BitmapData = el.has.hover ? Assets.getBitmapData(_basePath + el.att.hover, true) : null;
@@ -575,7 +575,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseButton(el:Fast, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseButton(el:Access, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display:Button = new Button(el, parentWidth, parentHeight);
 		return display;
@@ -589,7 +589,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseCheckbox(el:Fast, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseCheckbox(el:Access, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var bg:BitmapData = el.has.bg ? Assets.getBitmapData(_basePath+el.att.bg, true) : null;
 		var check:BitmapData = el.has.check ? Assets.getBitmapData(_basePath + el.att.check, true) : null;
@@ -605,7 +605,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseRadio(el:Fast, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseRadio(el:Access, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var bg:BitmapData = el.has.bg ? Assets.getBitmapData(_basePath+el.att.bg, true) : null;
 		var check:BitmapData = el.has.check ? Assets.getBitmapData(_basePath + el.att.check, true) : null;
@@ -621,7 +621,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseSlider(el:Fast, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseSlider(el:Access, ?group:Sprite, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display:GUISlider = new GUISlider(el, parentWidth, parentHeight);
 		//TODO merge Data with sliderDef
@@ -635,7 +635,7 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseSlot(xml:Fast, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseSlot(xml:Access, ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{			
 		return new Slot(xml, parentWidth, parentHeight);
 	}
@@ -647,20 +647,20 @@ class GUI extends Sprite
 	 * @param	parentHeight
 	 * @return
 	 */
-	public static function _parseProgress(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseProgress(fast:Access,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display = new ProgressBar(fast, parentWidth, parentHeight, _basePath);
 		return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
 	}
 	
-	public static function _parseShape(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseShape(fast:Access,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display = new GUIShape(fast, parentWidth, parentHeight);
 		//return _placeDisplay(fast, display, parentWidth, parentHeight, display.width, display.height);
 		return display;
 	}
 	
-	public static function _parseSWF(fast:Fast,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
+	public static function _parseSWF(fast:Access,  ?parentWidth:Float, ?parentHeight:Float):DisplayObject
 	{
 		var display = Assets.getMovieClip(fast.att.name);
 		display.name = fast.has.id ? fast.att.id : fast.att.name;
@@ -677,7 +677,7 @@ class GUI extends Sprite
 	 * @param	displayWidth because some display object doesn't have a width yet
 	 * @param	displayHeight because some display object doesn't have a height yet
 	 */
-	public static function _placeDisplay(el:Fast, display:DisplayObject, parentWidth:Float, parentHeight:Float, displayWidth:Float, displayHeight:Float):DisplayObject
+	public static function _placeDisplay(el:Access, display:DisplayObject, parentWidth:Float, parentHeight:Float, displayWidth:Float, displayHeight:Float):DisplayObject
 	{
 		var pos:ElementPosition = new ElementPosition(el, parentWidth, parentHeight, displayWidth, displayHeight);
 		
@@ -717,7 +717,7 @@ class GUI extends Sprite
 	{
 		if (!_transition.exists(name))
 		{
-			for (tween in _interfaceFast.node.transitions.nodes.tween)
+			for (tween in _interfaceAccess.node.transitions.nodes.tween)
 			{
 				if (tween.att.id == name)
 				{
@@ -864,7 +864,7 @@ class GUI extends Sprite
 			_bindedVariables.set(name, new BindedVariables(name, value));
 		}
 	}
-	public static function _getDef(id:String):Fast
+	public static function _getDef(id:String):Access
 	{
 		if (_def.exists(id))
 			return _def.get(id);

@@ -4,7 +4,7 @@ import gsui.interfaces.IPositionUpdatable;
 import gsui.utils.XMLUtils;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 #if debug
 import gsui.interfaces.IDebuggable;
 import openfl.events.MouseEvent;
@@ -124,14 +124,14 @@ class GUIGroup extends Base
 	 * @param	ContainerH size of parent container
 	 * @param	layout default is absolute placement
 	 */
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		_isInit = false;
 		super(Data, ContainerW, ContainerH);
 	
 	}
 	
-	override function parse(xml:Fast):Void 
+	override function parse(xml:Access):Void 
 	{
 		super.parse(xml);
 		

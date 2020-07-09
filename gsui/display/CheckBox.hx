@@ -3,7 +3,7 @@ import bindx.IBindable;
 import gsui.utils.DestroyUtils;
 import gsui.utils.GraphicsUtils;
 import gsui.display.GenericButton;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
@@ -22,7 +22,7 @@ class CheckBox extends GenericButton implements IBindable
 	var _label:GUITextField;
 	@:bindable public var checked:Bool = false;
 	
-	public function new(Data:Fast, Bg:BitmapData, Check:BitmapData, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, Bg:BitmapData, Check:BitmapData, ContainerW:Float, ContainerH:Float) 
 	{
 		super(Data.has.click ? Data.att.click : "", "");
 		if(Data.has.id)

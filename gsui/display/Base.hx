@@ -2,7 +2,7 @@ package gsui.display;
 
 import gsui.interfaces.IDestroyable;
 import gsui.utils.ParserUtils;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import lime.app.Event;
 import openfl.events.Event in OpenEvent;
 import openfl.display.Sprite;
@@ -56,7 +56,7 @@ class Base extends Sprite implements IDestroyable
 	var _colorDebug:Int = 0x0000FF;
 	#end
 	
-	public function new(xml:Fast, parentWidth:Float, parentHeight:Float) 
+	public function new(xml:Access, parentWidth:Float, parentHeight:Float) 
 	{
 		super();
 		
@@ -111,7 +111,7 @@ class Base extends Sprite implements IDestroyable
 		}
 	}
 	
-	function parse(xml:Fast):Void
+	function parse(xml:Access):Void
 	{
 		
 		if (xml.has.id)

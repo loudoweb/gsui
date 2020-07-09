@@ -1,7 +1,7 @@
 package gsui.transition;
 import haxe.Constraints.Function;
 import haxe.Json;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 
 /**
  * @usage <actuate id="theme-button-in" type="tween" duration="0.7" properties="{height:305}" ease="Linear.easeNone" delay="0.5"/>
@@ -43,14 +43,14 @@ class Transition
 		throw "please override";
 	}
 	
-	public static function create(xml:Fast):Transition
+	public static function create(xml:Access):Transition
 	{
 		return new Transition(xml.att.id,
 							Json.parse(xml.att.properties),
 							xml.has.duration ? Std.parseFloat(xml.att.duration) : 1);
 	}
 	
-	public function parse(xml:Fast):Transition
+	public function parse(xml:Access):Transition
 	{
 		
 		if (xml.has.type)

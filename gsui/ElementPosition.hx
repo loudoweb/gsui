@@ -1,6 +1,6 @@
 package gsui;
 import openfl.geom.Rectangle;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 
 /**
  * Helper to calculate position of element when the element is created
@@ -29,12 +29,12 @@ class ElementPosition
 	public var parentWidth:Float;
 	public var parentHeight:Float;
 	
-	public function new(fast:Fast, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float) 
+	public function new(fast:Access, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float) 
 	{
 		init(fast, parentWidth, parentHeight, elementWidth, elementHeight);
 	}
 	
-	public function init(fast:Fast, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float)
+	public function init(fast:Access, parentWidth:Float, parentHeight:Float, elementWidth:Float, elementHeight:Float)
 	{
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;

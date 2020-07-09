@@ -1,6 +1,6 @@
 package gsui.display;
 import bindx.IBindable;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
@@ -21,16 +21,16 @@ class GUISlider extends Sprite implements IBindable
 	var _button:SimpleButton;
 	@:bindable public var value(default, set):Float;
 	
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		super();
 		
 		if(Data.has.id)
 			name = Data.att.id;
 			
-		var sliderDef:Fast = Data.has.slider_def ? GUI._getDef(Data.att.slider_def) : null;
-		var labelDef:Fast = Data.has.label_def ? GUI._getDef(Data.att.label_def) : (sliderDef != null && sliderDef.has.label_def ?  GUI._getDef(sliderDef.att.label_def) : null);
-		var buttonDef:Fast = Data.has.button_def ? GUI._getDef(Data.att.button_def) : (sliderDef != null && sliderDef.has.button_def ?  GUI._getDef(sliderDef.att.button_def) : null);
+		var sliderDef:Access = Data.has.slider_def ? GUI._getDef(Data.att.slider_def) : null;
+		var labelDef:Access = Data.has.label_def ? GUI._getDef(Data.att.label_def) : (sliderDef != null && sliderDef.has.label_def ?  GUI._getDef(sliderDef.att.label_def) : null);
+		var buttonDef:Access = Data.has.button_def ? GUI._getDef(Data.att.button_def) : (sliderDef != null && sliderDef.has.button_def ?  GUI._getDef(sliderDef.att.button_def) : null);
 		
 		if (sliderDef == null)
 		{
@@ -120,7 +120,7 @@ class GUISlider extends Sprite implements IBindable
 		trace('click');
 	}
 	
-	public static function merge(Data:Fast, Def:Fast):Fast
+	public static function merge(Data:Access, Def:Access):Access
 	{
 		//TODO merge
 		return Data;

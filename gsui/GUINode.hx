@@ -1,5 +1,5 @@
 package gsui;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 
@@ -28,7 +28,7 @@ class GUINode
 	
 	private inline static var DEFAULT:String = "";
 	
-	public function new(Element:DisplayObject, State:String = "", ?Data:Fast) 
+	public function new(Element:DisplayObject, State:String = "", ?Data:Access) 
 	{
 		element = Element;
 		

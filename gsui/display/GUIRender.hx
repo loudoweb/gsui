@@ -1,7 +1,7 @@
 package gsui.display;
 import gsui.utils.ParserUtils;
 import openfl.display.Sprite;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.geom.Rectangle;
 
 /**
@@ -28,7 +28,7 @@ class GUIRender extends Base
 	
 	var _containerW:Float;
 	var _containerH:Float;
-	var itemRenderer:Fast;
+	var itemRenderer:Access;
 	var gapW:Int;
 	var gapH:Int;
 	
@@ -38,12 +38,12 @@ class GUIRender extends Base
 	public var column:Int;
 
 
-	public function new(Data:Fast, ContainerW:Float, ContainerH:Float) 
+	public function new(Data:Access, ContainerW:Float, ContainerH:Float) 
 	{
 		super(Data, ContainerW, ContainerH);
 	}
 	
-	override function parse(xml:Fast):Void 
+	override function parse(xml:Access):Void 
 	{
 		super.parse(xml);
 		

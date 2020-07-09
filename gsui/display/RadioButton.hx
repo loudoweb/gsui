@@ -1,5 +1,5 @@
 package gsui.display;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 import openfl.display.BitmapData;
 
 /**
@@ -11,7 +11,7 @@ class RadioButton extends CheckBox
 
 	public var groupName:String;
 	
-	public function new(data:Fast, bg:BitmapData, check:BitmapData, containerW:Float, containerH:Float) 
+	public function new(data:Access, bg:BitmapData, check:BitmapData, containerW:Float, containerH:Float) 
 	{
 		groupName = data.has.groupName ? data.att.groupName : "";
 		super(data, bg, check, containerW, containerH);

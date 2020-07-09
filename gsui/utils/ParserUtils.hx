@@ -1,5 +1,5 @@
 package gsui.utils;
-import haxe.xml.Fast;
+import haxe.xml.Access;
 
 /**
  * ...
@@ -8,12 +8,12 @@ import haxe.xml.Fast;
 class ParserUtils 
 {
 
-	public static function getWidth(Data:Fast, ContainerW:Float):Float
+	public static function getWidth(Data:Access, ContainerW:Float):Float
 	{
 		return Data.has.width ? getWidthValue(Data.att.width, ContainerW) : ContainerW;
 	}
 	
-	public static function getHeight(Data:Fast, ContainerH:Float):Float
+	public static function getHeight(Data:Access, ContainerH:Float):Float
 	{
 		return Data.has.height ? getHeightValue(Data.att.height, ContainerH) : ContainerH;
 	}
@@ -65,7 +65,7 @@ class ParserUtils
 		return colorDef  != null ? parseColor(colorDef.att.value) : parseColor(str);
 	}
 	
-	public static function getColor(Data:Fast, attribute:String = "color", ?DefaultData:Fast):Int
+	public static function getColor(Data:Access, attribute:String = "color", ?DefaultData:Access):Int
 	{
 		var colorDef = null;
 		if (Data.has.resolve(attribute))
@@ -82,7 +82,7 @@ class ParserUtils
 		return 0;
 	}
 	
-	public static function getColorAlpha(Data:Fast, attribute:String = "color", ?DefaultData:Fast):Float
+	public static function getColorAlpha(Data:Access, attribute:String = "color", ?DefaultData:Access):Float
 	{
 		var colorDef = null;
 		if (Data.has.resolve(attribute))
@@ -107,12 +107,12 @@ class ParserUtils
 		return Std.parseInt(str);
 	}
 	
-	public static function parseAlpha(Data:Fast):Float
+	public static function parseAlpha(Data:Access):Float
 	{
 		return Data.has.alpha ? Std.parseFloat(Data.att.alpha) : 1;
 	}
 	
-	inline public static function getAttInt(Data:Fast, att:String, defaultvalue:Int = 0):Int
+	inline public static function getAttInt(Data:Access, att:String, defaultvalue:Int = 0):Int
 	{
 		if (Data.has.resolve(att))
 		{
@@ -129,7 +129,7 @@ class ParserUtils
 	 * @param	defaultvalue
 	 * @return
 	 */
-	inline public static function getAttFloat(Data:Fast, att:String, defaultvalue:Float = 0):Float
+	inline public static function getAttFloat(Data:Access, att:String, defaultvalue:Float = 0):Float
 	{
 		if (Data.has.resolve(att))
 		{
