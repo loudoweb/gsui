@@ -331,6 +331,13 @@ class Base extends Sprite implements IDestroyable
 		init();
 	}
 	
+	#if flash
+	public function invalidate():Void 
+	{
+		
+	}
+	#end
+	
 	/**
 	 * Shortcut to dispatch a width or height changed
 	 */

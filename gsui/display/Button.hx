@@ -226,6 +226,17 @@ class Button extends GenericButton
 			case RADIO:
 				state = "selected";
 				if (parent != null) {
+					#if flash
+					for (i in 0...parent.numChildren)
+					{
+						var it = parent.getChildAt(i);
+						if (Std.is(it, Button))
+						{
+							if(it != this)
+								cast(it, Button).unselect();
+						}
+					}
+					#else
 					for (it in parent.__children)
 					{
 						if (Std.is(it, Button))
@@ -234,6 +245,7 @@ class Button extends GenericButton
 								cast(it, Button).unselect();
 						}
 					}
+					#end
 				}
 			case CHECKBOX:
 				if (state != "selected")

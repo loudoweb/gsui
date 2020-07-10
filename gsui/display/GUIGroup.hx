@@ -420,6 +420,7 @@ class GUIGroup extends Base
 		/**
 	 * Called by child width/height changed
 	 */
+	
 	override public function invalidate():Void 
 	{
 		if (_layout != null)
