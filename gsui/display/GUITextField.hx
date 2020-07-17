@@ -24,7 +24,7 @@ import openfl.events.MouseEvent;
 
 class GUITextField extends Base
 {
-	public static var TONGUE_VAR:EReg = new EReg("{[$a-zA-Z0-9-_]+}", "ig");
+	public static var TONGUE_VAR:EReg = new EReg("{\\$[a-zA-Z0-9-_]+}", "ig");
 	public static var GUI_VAR:EReg = new EReg("{[a-zA-Z0-9-_ ]+}", "ig");
 	
 	public var sourceText:String;
