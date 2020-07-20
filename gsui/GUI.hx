@@ -1,4 +1,5 @@
 package gsui;
+import openfl.system.System;
 import gsui.ElementPosition;
 import gsui.display.GenericButton;
 import gsui.display.GUITextField;
@@ -58,6 +59,7 @@ enum EGUIAction {
 	GUI_REMOVE;
 	GUI_STATE;
 	GUI_VAR;
+	GUI_EXIT;
 	//GUI_EVENT;//TODO use signal?
 }
 enum EGUIEffect {
@@ -743,10 +745,12 @@ class GUI extends Sprite
 	{
 		if (param == "")
 			return;
-		var prefix:EGUIAction = Type.createEnum(EGUIAction, Std.string(param.split(":")[0]).toUpperCase());
+		var params = param.split(":");
+		var prefix:EGUIAction = Type.createEnum(EGUIAction, Std.string(params[0]).toUpperCase());
 		if (prefix == null)
 			throw new Error("The Enum specified [" + param.split(":")[0] + "]doesn't exist");
-		var value:String = param.split(":")[1];
+		
+		var value:String = params.length > 1 ? params[1] : "";
 		resolveGuiAction(prefix, value);
 		
 	}
@@ -777,6 +781,8 @@ class GUI extends Sprite
 							varValue = ReplaceUtils.replaceTongue(TONGUE.get(varValue, "interface", true), TONGUE);
 					_bindVariable(coupleVar[i], varValue);
 				}
+			case GUI_EXIT:
+				System.exit(0);
 		}
 	}
 	public static function _saturate(groups:Array<String>):Void{
