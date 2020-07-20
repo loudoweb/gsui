@@ -709,7 +709,7 @@ class GUI extends Sprite
 			
 		if (el.has.effect && el.att.effect != "")
 			_effect(display, Type.createEnum(EGUIEffect, el.att.effect.toUpperCase()));
-		trace(display.name, display.x, display.y, display.width, display.height);
+		
 		return display;
 	}
 	
