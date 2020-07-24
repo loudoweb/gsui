@@ -27,7 +27,7 @@ class GUIGroup extends Base
 	
 	public var state(get, set):String;
 	
-	var _layout:ELayout;//default absolute
+	var _layout:ELayout;//default absolute (children already placed)
 	/**
 	 * Distance between children.
 	 * Use width/height set in xml or parent.
