@@ -17,7 +17,7 @@ class GUIRender extends Base
 	public var nodes(default, null):Array<Button>;
 	
 	/**
-	 * layout v (vertical), h (horizontal), p (already placed), or column,row
+	 * layout v (vertical), h (horizontal), p (already placed), or ColumnxRow
 	 * @default h (horizontal)
 	 */
 	var _layout:String = "";//default h
@@ -32,6 +32,11 @@ class GUIRender extends Base
 	var gapW:Int;
 	var gapH:Int;
 	
+	/**
+	 * 
+	 * MaxItem limit the number of items in the stack. If set to 0, it means there is no limit.
+	 * Each item after the limit, is a cloned of the first one.
+	 */
 	public var maxItem:Int;
 	public var items(default, null):Int;
 	public var row:Int;
@@ -50,7 +55,7 @@ class GUIRender extends Base
 		isBackground = xml.has.background && xml.att.background == "true";
 		centerContent = xml.has.x && xml.att.x == "center";//TODO center y
 		
-		maxItem = Std.parseInt(xml.att.num);
+		maxItem = xml.has.num ? Std.parseInt(xml.att.num) : 0;
 		
 		itemRenderer = xml.elements.next();
 		
@@ -160,8 +165,19 @@ class GUIRender extends Base
 	public function setData(data:Array<GUIButtonData>):Void
 	{
 		if (data.length > maxItem) {
-			trace("too many data");
-			return;
+			if(maxItem > 0)
+			{
+					trace("too many data");
+					return;
+			}else{
+				for(i in 0...data.length)
+				{
+					var button:Button = cast GUI._parseButton(itemRenderer, initWidth, initHeight);
+					if(itemRenderer.has.id)
+						button.name = itemRenderer.att.id + i;
+					nodes.push(button);
+				}
+			}
 		}
 		items = data.length;
 		var i:Int = 0;
@@ -189,8 +205,21 @@ class GUIRender extends Base
 	{
 		var begin:Int = items;
 		if (items + data.length > maxItem) {
-			trace("too many data");
-			return;
+			if(maxItem > 0)
+			{
+					trace("too many data");
+					return;
+			}else{
+				for(i in 0...data.length)
+				{
+					var button:Button = cast GUI._parseButton(itemRenderer, initWidth, initHeight);
+					if(itemRenderer.has.id)
+						button.name = itemRenderer.att.id + begin + i;
+					nodes.push(button);
+				}
+				
+			}
+			
 		}
 		items += data.length;
 		for (i in begin...items)
