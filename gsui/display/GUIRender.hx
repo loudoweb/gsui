@@ -31,6 +31,8 @@ class GUIRender extends Base
 	var itemRenderer:Access;
 	var gapW:Int;
 	var gapH:Int;
+	var _oldWidth:Float;
+	var _oldHeight:Float;
 	
 	/**
 	 * 
@@ -126,8 +128,8 @@ class GUIRender extends Base
 			}
 		}
 	}
-	
-	override public function init():Void 
+
+	override public function preInit():Void 
 	{
 		//move only item renderer and not already placed nodes
 		/*if (row > -1)
@@ -144,26 +146,37 @@ class GUIRender extends Base
 				i++;
 			}
 		}*/
-		
-		super.init();
-		
-		updatePosition();
 	}
 	
-	public function updatePosition():Void
+	override public function init():Void 
 	{
-		/*if (centerContent)
+		/*var oldWidth = width;
+		var oldHeight = height;
+		
+		switch(_layout)
+			{
+				case HORIZONTAL:
+					initWidth = width;
+				case VERTICAL:
+					initHeight = height;
+			}
+		}
+		
+		if (oldWidth != width || oldHeight != height)
 		{
-			x = (_containerW  - width) * 0.5;
-		}*/
-		/*if (height > _height && this.scrollRect == null)
-		{
-			this.scrollRect = new Rectangle(0, 0, _width, _height);
-			//TODO make element scrollable
-		}*/
+			//setDirty();
+			dispatchResize();
+		}
+		*/
+		super.init();
+		
 	}
+
 	public function setData(data:Array<GUIButtonData>):Void
 	{
+		_oldWidth = initWidth;
+		_oldHeight = initHeight;
+
 		if (data.length > maxItem) {
 			if(maxItem > 0)
 			{
@@ -199,10 +212,32 @@ class GUIRender extends Base
 			}
 			++i;
 		}
+
+		switch(_layout)
+		{
+			case "h":
+				initWidth = width;
+			case "v":
+				initHeight = height;
+			default:
+				initHeight = height;
+				initWidth = width;
+		}
+		
+
+
+		/*if (oldWidth != width || oldHeight != height)
+		{
+			//setDirty();
+			dispatchResize();
+		}*/
 		setDirty();
 	}
 	public function addData(data:Array<GUIButtonData>):Void
 	{
+		_oldWidth = initWidth;
+		_oldHeight = initHeight;
+
 		var begin:Int = items;
 		if (items + data.length > maxItem) {
 			if(maxItem > 0)
@@ -233,6 +268,18 @@ class GUIRender extends Base
 					node.parent.removeChild(node);
 			}
 		}
+
+		switch(_layout)
+		{
+			case "h":
+				initWidth = width;
+			case "v":
+				initHeight = height;
+			default:
+				initHeight = height;
+				initWidth = width;
+		}
+
 		setDirty();
 	}
 	public function removeData(indexes:Array<Int>):Void
@@ -251,19 +298,7 @@ class GUIRender extends Base
 		}
 		setDirty();
 	}
-	public function fitData():Void
-	{
-		var collectedData:Array<GUIButtonData> = [];
-		//collect GuiButtonData
-		for (node in nodes)
-		{
-			if (node.parent != null && node.getData() != null)
-			{
-				collectedData.push(node.getData());
-			}
-		}
-		setData(collectedData);
-	}
+	
 	public function clear():Void
 	{
 		for (node in nodes)
@@ -299,6 +334,7 @@ class GUIRender extends Base
 			parent.removeChild(this);
 		}
 	}
+
 	public function getIndex():Int
 	{
 		if (parent == null)
