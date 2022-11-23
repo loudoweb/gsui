@@ -290,6 +290,7 @@ class Button extends GenericButton
 	{
 		if (guiButtonData != null) {
 			_data = guiButtonData;
+			//update img in slots
 			if(guiButtonData.images != null){
 				for (i in 0...guiButtonData.images.length)
 				{
@@ -300,6 +301,7 @@ class Button extends GenericButton
 					
 				}
 			}
+			//updates textfields texts
 			if(guiButtonData.texts != null){
 				for (i in 0...guiButtonData.texts.length)
 				{
@@ -308,7 +310,7 @@ class Button extends GenericButton
 					
 				}
 			}
-			
+			//update state
 			if (guiButtonData.state != "") {
 				_customStates = guiButtonData.state;
 				handleState(_currentState);
@@ -317,13 +319,20 @@ class Button extends GenericButton
 				_customStates = "";
 				handleState(_currentState);
 			}
+			//update param
 			customHoverParam = guiButtonData.onHover;
-			customClickParam = guiButtonData.click;
-			mouseCallback = guiButtonData.clickHandler;
+			customClickParam = guiButtonData.onClick;
+			mouseCallback = guiButtonData.mouseCallback;
 			behaviour = guiButtonData.behaviour;
 			disableMouseClick = false;
 			//disableMouseClick = mouseCallback != null ? false : true;
 			//disableGUICallback = disableMouseClick;
+
+			if(guiButtonData.x != null)
+				setX(guiButtonData.x);
+
+			if(guiButtonData.y != null)
+				setY(guiButtonData.y);
 		}
 	}
 	public function removeData():Void

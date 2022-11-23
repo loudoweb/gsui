@@ -193,4 +193,78 @@ class ResizeHelper
 		
 	}
 	
+	/**
+	 * Resize according to parent size and not stage size
+	 * @param	container
+	 * @param	parentW
+	 * @param	parentH
+	 */
+	public static function resizeContent(container:DisplayObject, parentW:Int, parentH:Int, margin:Int = 0 ):Void
+	{
+		WIDTH = parentW;
+		HEIGHT = parentH;
+				
+		ORIENTATION = WIDTH > HEIGHT ? LANDSCAPE : PORTRAIT;
+		
+		var wRatio = WIDTH / ORIGIN_WIDTH;
+		var hRatio = HEIGHT / ORIGIN_HEIGHT;
+		
+		/*
+		if (wRatio > 1)
+			wRatio = 1;
+			
+		if (hRatio > 1)
+			hRatio = 1;
+		*/
+			
+		if (wRatio < hRatio)
+		{
+			container.scaleX = container.scaleY = RATIO = wRatio;
+			container.y = (HEIGHT - ORIGIN_HEIGHT * RATIO) * 0.5 + margin * RATIO;
+			container.x = margin * RATIO;
+		}else {
+			container.scaleX = container.scaleY = RATIO = hRatio;
+			container.x = (WIDTH - ORIGIN_WIDTH * RATIO) * 0.5  + margin * RATIO;
+			container.y = margin * RATIO;
+		}
+		
+		
+		POS.x = container.x;
+		POS.y = container.y;
+		
+		trace(WIDTH + ' x ' + HEIGHT, RATIO, POS, ORIGIN_WIDTH, ORIGIN_HEIGHT);
+		
+		onResize.dispatch();
+	}
+	
+	/**
+	 * Update values without resizing
+	 * @param	container
+	 * @param	parentW
+	 * @param	parentH
+	 */
+	public static function update():Void
+	{
+		WIDTH = STAGE.stageWidth;
+		HEIGHT = STAGE.stageHeight;
+				
+		ORIENTATION = WIDTH > HEIGHT ? LANDSCAPE : PORTRAIT;
+		
+		var wRatio = WIDTH / ORIGIN_WIDTH;
+		var hRatio = HEIGHT / ORIGIN_HEIGHT;
+		
+			
+		//if (wRatio < hRatio)
+		//{
+			RATIO = wRatio;
+			
+		/*}else {
+			RATIO = hRatio;
+		}*/
+		
+		trace(WIDTH + ' x ' + HEIGHT, RATIO, ORIGIN_WIDTH, ORIGIN_HEIGHT);
+		
+		onResize.dispatch();
+	}
+	
 }

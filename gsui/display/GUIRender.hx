@@ -15,6 +15,7 @@ class GUIRender extends Base
 	public var isBackground:Bool = false;
 	
 	public var nodes(default, null):Array<Button>;
+	public var itemRenderer(default, null):Access;
 	
 	/**
 	 * layout v (vertical), h (horizontal), p (already placed), or ColumnxRow
@@ -28,7 +29,7 @@ class GUIRender extends Base
 	
 	var _containerW:Float;
 	var _containerH:Float;
-	var itemRenderer:Access;
+	
 	var gapW:Int;
 	var gapH:Int;
 	var _oldWidth:Float;
@@ -199,6 +200,7 @@ class GUIRender extends Base
 			if (i < items) {
 				addChild(node);
 				node.setData(data[i]);
+				trace(node.x, node.y);
 				if (node.onIn != "")
 				{
 					for (onIn in node.onIn.split(","))
@@ -212,7 +214,7 @@ class GUIRender extends Base
 			}
 			++i;
 		}
-
+trace(width, height);
 		switch(_layout)
 		{
 			case "h":
