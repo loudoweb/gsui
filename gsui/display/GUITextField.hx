@@ -30,7 +30,8 @@ class GUITextField extends Base {
 	public var text(get, set):String;
 	public var textColor(get, set):UInt;
 
-	var _textfield:TextField;
+	public var textfield:TextField;
+
 	var _upper:Bool;
 	var _strike:Bool = false;
 	var _strikeShape:Shape;
@@ -41,8 +42,8 @@ class GUITextField extends Base {
 	var _keepHeight:Bool;
 
 	public function new(Data:Access, ContainerW:Float, ContainerH:Float) {
-		_textfield = new TextField();
-		_textfield.embedFonts = true;
+		textfield = new TextField();
+		textfield.embedFonts = true;
 
 		super(Data, ContainerW, ContainerH);
 
@@ -59,7 +60,7 @@ class GUITextField extends Base {
 		var font:Font = null;
 
 		if (xml.has.id) {
-			_textfield.name = xml.att.id;
+			textfield.name = xml.att.id;
 		}
 
 		var textDef:Access = GUI._getDef(xml.att.font);
@@ -95,27 +96,27 @@ class GUITextField extends Base {
 		else if (textDef != null && textDef.has.bold)
 			format.bold = Std.string(textDef.att.bold) == "true";
 
-		_textfield.defaultTextFormat = format;
+		textfield.defaultTextFormat = format;
 
 		if (xml.has.input && xml.att.input == "true") {
-			_textfield.type = TextFieldType.INPUT;
-			_textfield.selectable = true;
+			textfield.type = TextFieldType.INPUT;
+			textfield.selectable = true;
 		} else if (textDef != null && textDef.has.input && textDef.att.input == "true") {
-			_textfield.type = TextFieldType.INPUT;
-			_textfield.selectable = true;
+			textfield.type = TextFieldType.INPUT;
+			textfield.selectable = true;
 		} else {
-			_textfield.selectable = false;
+			textfield.selectable = false;
 		}
 
 		if (xml.has.maxChars)
-			_textfield.maxChars = Std.parseInt(xml.att.maxChars);
+			textfield.maxChars = Std.parseInt(xml.att.maxChars);
 		else if (textDef != null && textDef.has.maxChars)
-			_textfield.maxChars = Std.parseInt(textDef.att.maxChars);
+			textfield.maxChars = Std.parseInt(textDef.att.maxChars);
 
 		if (xml.has.a) // TODO r instead?
-			_textfield.rotation = Std.parseFloat(Std.string(xml.att.a));
+			textfield.rotation = Std.parseFloat(Std.string(xml.att.a));
 		else if (textDef != null && textDef.has.a)
-			_textfield.rotation = Std.parseFloat(Std.string(textDef.att.a));
+			textfield.rotation = Std.parseFloat(Std.string(textDef.att.a));
 
 		if (xml.has.strike)
 			_strike = xml.att.strike == "true";
@@ -124,19 +125,19 @@ class GUITextField extends Base {
 
 		if ((xml.has.multiline && xml.att.multiline == "true")
 			|| (textDef != null && textDef.has.multiline && textDef.att.multiline == "true")) {
-			_textfield.multiline = true;
-			_textfield.wordWrap = true;
-			_textfield.width = initWidth;
+			textfield.multiline = true;
+			textfield.wordWrap = true;
+			textfield.width = initWidth;
 
 			if (!xml.has.fixHeight)
-				_textfield.autoSize = TextFieldAutoSize.LEFT; // TODO check language (arab => to the right)
+				textfield.autoSize = TextFieldAutoSize.LEFT; // TODO check language (arab => to the right)
 		}
 
 		if (!xml.has.width) {
-			if (!_textfield.multiline) {
+			if (!textfield.multiline) {
 				// don't use parent width, by default we will have a textfield that fit the text width if only one line
 				useParentWidth = false;
-				_textfield.autoSize = TextFieldAutoSize.LEFT; // TODO check language (arab => to the right)
+				textfield.autoSize = TextFieldAutoSize.LEFT; // TODO check language (arab => to the right)
 
 				if (format.align == "center") {
 					usePercentX = true;
@@ -152,7 +153,7 @@ class GUITextField extends Base {
 			initHeight = 0;
 		} else {
 			_keepHeight = true;
-			_textfield.height = initHeight;
+			textfield.height = initHeight;
 		}
 
 		if (useParentHeight || usePercentHeight)
@@ -168,27 +169,27 @@ class GUITextField extends Base {
 	}
 
 	override public function preInit():Void {
-		addChild(_textfield);
+		addChild(textfield);
 	}
 
 	override public function init():Void {
 		if (useParentHeight) {
-			_textfield.height = parentHeight;
+			textfield.height = parentHeight;
 		} else if (usePercentHeight) {
-			_textfield.height = parentHeight * initHeight; // TOCHECK
+			textfield.height = parentHeight * initHeight; // TOCHECK
 		} else if (!_keepHeight) {
-			_textfield.height = _textfield.textHeight + 4;
-			initHeight = _textfield.height;
+			textfield.height = textfield.textHeight + 4;
+			initHeight = textfield.height;
 		}
 
 		if (useParentWidth) {
-			_textfield.width = parentWidth;
+			textfield.width = parentWidth;
 		} else if (usePercentWidth) {
-			_textfield.width = initWidth * parentWidth; // TOCHECK
-		} else if (_textfield.autoSize == TextFieldAutoSize.LEFT && !_textfield.multiline) {
-			initWidth = _textfield.width; // alow to calculate x position
+			textfield.width = initWidth * parentWidth; // TOCHECK
+		} else if (textfield.autoSize == TextFieldAutoSize.LEFT && !textfield.multiline) {
+			initWidth = textfield.width; // alow to calculate x position
 		} else {
-			_textfield.width = initWidth;
+			textfield.width = initWidth;
 		}
 
 		super.init();
@@ -238,18 +239,18 @@ class GUITextField extends Base {
 	}
 
 	public function set_text(v:String):String {
-		_textfield.htmlText = _upper ? v.toUpperCase() : v;
+		textfield.htmlText = _upper ? v.toUpperCase() : v;
 
 		#if flash
 		if (_strike && v != "") { // TODO utiliser textLineMetrics http://community.openfl.org/t/textfield-how-i-get-char-bound/804/10
-			var startPt:Point = new Point(_textfield.getCharBoundaries(0).x, _textfield.getCharBoundaries(0).y);
-			var h:Float = _textfield.getLineMetrics(0).height - _textfield.getLineMetrics(0).leading;
+			var startPt:Point = new Point(textfield.getCharBoundaries(0).x, textfield.getCharBoundaries(0).y);
+			var h:Float = textfield.getLineMetrics(0).height - textfield.getLineMetrics(0).leading;
 			var _strikeShape = new Shape();
-			_strikeShape.x = _textfield.x;
-			_strikeShape.y = _textfield.y;
+			_strikeShape.x = textfield.x;
+			_strikeShape.y = textfield.y;
 			_strikeShape.graphics.lineStyle(3);
 			_strikeShape.graphics.moveTo(startPt.x, startPt.y + h / 2);
-			_strikeShape.graphics.lineTo(startPt.x + _textfield.textWidth, startPt.y + h / 2);
+			_strikeShape.graphics.lineTo(startPt.x + textfield.textWidth, startPt.y + h / 2);
 			addChild(_strikeShape);
 		} else if (_strikeShape != null && _strikeShape.parent != null) {
 			_strikeShape.parent.removeChild(_strikeShape);
@@ -261,28 +262,28 @@ class GUITextField extends Base {
 		// dispatchResize();
 		setDirty();
 
-		return _textfield.text;
+		return textfield.text;
 	}
 
 	public function get_text():String {
-		return _textfield.text;
+		return textfield.text;
 	}
 
 	public function set_textColor(v:UInt):UInt {
-		_textfield.textColor = v;
-		_textfield.text = _textfield.text;
-		return _textfield.textColor;
+		textfield.textColor = v;
+		textfield.text = textfield.text;
+		return textfield.textColor;
 	}
 
 	public function get_textColor():UInt {
-		return _textfield.textColor;
+		return textfield.textColor;
 	}
 
 	override public function drawDebug(?color:Int):Void {
 		#if debug
 		if (!_debug) {
 			this.graphics.beginFill(color != null ? color : _colorDebug, 0.10);
-			this.graphics.drawRect(0, 0, _textfield.width, _textfield.height);
+			this.graphics.drawRect(0, 0, textfield.width, textfield.height);
 			this.graphics.endFill();
 			this.addEventListener(MouseEvent.ROLL_OVER, onOverDebug);
 			_debug = true;
