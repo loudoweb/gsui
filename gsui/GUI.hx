@@ -735,7 +735,11 @@ class GUI extends Sprite {
 					_bindVariable(coupleVar[i], varValue);
 				}
 			case GUI_EXIT:
+				#if html5
+				js.Browser.window.close();
+				#else
 				System.exit(0);
+				#end
 		}
 	}
 
