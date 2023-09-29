@@ -214,7 +214,7 @@ class GUIRender extends Base
 			}
 			++i;
 		}
-trace(width, height);
+		trace(width, height);
 		switch(_layout)
 		{
 			case "h":

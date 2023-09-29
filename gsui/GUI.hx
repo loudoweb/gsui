@@ -220,18 +220,21 @@ class GUI extends Sprite {
 			_activeTopViews.remove(group.name);
 		}
 		// create hudGroup to display
-		var guis:Array<String> = Std.string(el.att.groups).split(",");
-		var groupRoot:GUIGroup;
-		for (gui in guis) {
-			if (!_views.exists(gui)) {
-				groupRoot = cast _parseGroup(_viewsConf.get(gui), GUI_WIDTH, GUI_HEIGHT);
-				_views.set(gui, groupRoot);
-				instance.addChild(groupRoot);
-				_activeTopViews.set(gui, groupRoot);
-			} else {
-				groupRoot = _views.get(gui);
-				instance.addChild(groupRoot);
-				_activeTopViews.set(gui, groupRoot);
+		if(el.has.groups)
+		{
+			var guis:Array<String> = Std.string(el.att.groups).split(",");
+			var groupRoot:GUIGroup;
+			for (gui in guis) {
+				if (!_views.exists(gui)) {
+					groupRoot = cast _parseGroup(_viewsConf.get(gui), GUI_WIDTH, GUI_HEIGHT);
+					_views.set(gui, groupRoot);
+					instance.addChild(groupRoot);
+					_activeTopViews.set(gui, groupRoot);
+				} else {
+					groupRoot = _views.get(gui);
+					instance.addChild(groupRoot);
+					_activeTopViews.set(gui, groupRoot);
+				}
 			}
 		}
 		// desaturate
