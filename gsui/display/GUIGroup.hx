@@ -210,9 +210,9 @@ class GUIGroup extends Base
 			
 			//check total space to compare with wanted space for auto gap
 			var totalSpace = 0.0;
-			if (_gap == -1)
+			if (_gap < 0)
 			{
-				
+				//auto gap based on children size
 				for (node in _nodes)
 				{
 					
@@ -228,6 +228,19 @@ class GUIGroup extends Base
 					
 				}
 			}
+			if (_gap == -2)
+			{
+				//auto gap based on parent size
+				switch(_layout)
+					{
+						case HORIZONTAL:
+							
+							initWidth = parentWidth;
+						case VERTICAL:
+							initHeight = parentHeight;
+							
+					}
+			}
 			
 			//update nodes x and y
 			var pWH:Float = 0;
@@ -237,7 +250,7 @@ class GUIGroup extends Base
 			{
 				case HORIZONTAL:
 					
-					gap = _gap == -1 ? (initWidth - totalSpace) / _nodes.length : _gap;
+					gap = _gap < 0 ? (initWidth - totalSpace) / _nodes.length : _gap;
 					
 					for (node in _nodes)
 					{
@@ -253,7 +266,7 @@ class GUIGroup extends Base
 					}
 				case VERTICAL:
 					
-					gap = _gap == -1 ? (initHeight - totalSpace) / _nodes.length : _gap;
+					gap = _gap < 0 ? (initHeight - totalSpace) / _nodes.length : _gap;
 					
 					for (node in _nodes)
 					{
