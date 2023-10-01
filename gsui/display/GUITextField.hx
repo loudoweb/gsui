@@ -79,6 +79,14 @@ class GUITextField extends Base {
 		} else if (Assets.exists("fonts/" + xml.att.font + ".ttf")) {
 			font = Assets.getFont("fonts/" + xml.att.font + ".ttf");
 		}
+		#if debug
+		if(font == null)
+		{
+			throw "Font not found: " + (xml.has.font ? " att: " + xml.att.font : "") + (textDef != null ? " def: " + textDef.att.font : "");
+		}
+		#end
+
+		
 
 		var size = xml.has.size ? Std.parseInt(xml.att.size) : (textDef.has.size ? Std.parseInt(textDef.att.size) : 20);
 
@@ -95,6 +103,18 @@ class GUITextField extends Base {
 			format.bold = Std.string(xml.att.bold) == "true";
 		else if (textDef != null && textDef.has.bold)
 			format.bold = Std.string(textDef.att.bold) == "true";
+
+		//vertical spacing
+		if (xml.has.leading)
+			format.leading = Std.parseInt(xml.att.leading);
+		else if (textDef != null && textDef.has.leading)
+			format.leading = Std.parseInt(textDef.att.leading);
+
+		//horizontal spacing //TOFIX in openfl html5?
+		if (xml.has.spacing)
+			format.letterSpacing = Std.parseFloat(xml.att.spacing);
+		else if (textDef != null && textDef.has.spacing)
+			format.letterSpacing = Std.parseFloat(textDef.att.spacing);
 
 		textfield.defaultTextFormat = format;
 
