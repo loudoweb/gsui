@@ -1,5 +1,6 @@
 package gsui;
 
+import openfl.display.Shader;
 import openfl.system.System;
 import gsui.ElementPosition;
 import gsui.display.GenericButton;
@@ -220,8 +221,7 @@ class GUI extends Sprite {
 			_activeTopViews.remove(group.name);
 		}
 		// create hudGroup to display
-		if(el.has.groups)
-		{
+		if (el.has.groups) {
 			var guis:Array<String> = Std.string(el.att.groups).split(",");
 			var groupRoot:GUIGroup;
 			for (gui in guis) {
@@ -497,7 +497,13 @@ class GUI extends Sprite {
 	public static function _parseText(el:Access, ?parentWidth:Float, ?parentHeight:Float):DisplayObject // TODO vAlign
 	{
 		// create textfield
-		return new GUITextField(el, parentWidth, parentHeight);
+		var tf = new GUITextField(el, parentWidth, parentHeight);
+		#if openflShaders
+		if (el.has.filters && el.att.filters != "") {
+			_addFilters(tf, el.att.filters);
+		}
+		#end
+		return tf;
 	}
 
 	/**
@@ -676,6 +682,12 @@ class GUI extends Sprite {
 		if (el.has.effect && el.att.effect != "")
 			_effect(display, Type.createEnum(EGUIEffect, el.att.effect.toUpperCase()));
 
+		#if openflShaders
+		if (el.has.filters && el.att.filters != "") {
+			_addFilters(display, el.att.filters);
+		}
+		#end
+
 		return display;
 	}
 
@@ -785,6 +797,25 @@ class GUI extends Sprite {
 				child.filters = [FilterUtils.saturate(0.25), new ColorMatrixFilter(FilterUtils.hue(35 * Math.PI))];
 		}
 	}
+
+	#if openflShaders
+	public static function _addFilters(child:DisplayObject, filters:String):Void {
+		var _list = filters.split(",");
+		var _filters = child.filters;
+		for (filter in _list) {
+			var def = _getDef(filter);
+			if (def != null) {
+				filter = def.att.type;
+			}
+			switch (filter.toUpperCase()) {
+				case "OUTLINE":
+					_filters.push(new openfl.shaders.Outline.OutlineFilter(def.has.border ? Std.parseFloat(def.att.border) : 1.,
+						def.has.color ? ParserUtils.getColor(def) : 0x000000));
+			}
+		}
+		child.filters = _filters;
+	}
+	#end
 
 	/**
 	 * Get active top views.

@@ -23,7 +23,7 @@ class GUIRender extends Base
 	 */
 	var _layout:String = "";//default h
 	
-	var _gap:Int;
+	public var _gap(default, null):Int;
 	
 	public var centerContent:Bool;
 	

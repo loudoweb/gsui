@@ -152,6 +152,7 @@ class GUITextField extends Base {
 			if (!xml.has.fixHeight)
 				textfield.autoSize = TextFieldAutoSize.LEFT; // TODO check language (arab => to the right)
 		}
+		
 
 		if (!xml.has.width) {
 			if (!textfield.multiline) {
